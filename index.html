@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakes by Sen</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
+    <style>
+        :root {
+            --primary: #d48a44; --dark: #2c1e16; --light: #fcf9f6; --accent: #e07a5f; --flour-color: rgba(220, 210, 200, 0.4); 
+        }
+        
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--light); color: var(--dark); overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        
+        header { position: relative; background: linear-gradient(rgba(44, 30, 22, 0.75), rgba(44, 30, 22, 0.75)), url('https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000') center/cover; color: var(--light); padding: 7rem 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); animation: fadeInDown 1s ease-out forwards; }
+        header p { font-size: 1.3rem; font-style: italic; margin-top: 15px; color: var(--primary); opacity: 0; animation: fadeInDown 1s ease-out 0.3s forwards; }
+
+        .hamburger-menu { position: absolute; top: 25px; left: 30px; font-size: 2.2rem; color: var(--light); cursor: pointer; z-index: 100; transition: transform 0.3s ease; }
+        .hamburger-menu:hover { transform: scale(1.1); color: var(--primary); }
+
+        .sidebar { position: fixed; top: 0; left: -350px; width: 300px; height: 100vh; background-color: var(--light); color: var(--dark); box-shadow: 2px 0 15px rgba(0,0,0,0.2); transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; padding: 2.5rem 2rem; box-sizing: border-box; display: flex; flex-direction: column; overflow-y: auto; padding-bottom: 4rem; }
+        .sidebar.active { left: 0; }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
+        .sidebar h2 { color: var(--primary); font-size: 2rem; margin-top: 1.5rem; }
+        .sidebar p { line-height: 1.7; color: #444; }
+        .email-link { display: block; margin-top: 1rem; color: var(--accent); text-decoration: none; font-weight: 500; }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: all 0.4s ease; z-index: 999; backdrop-filter: blur(3px); }
+        .overlay.active { opacity: 1; visibility: visible; }
+        
+        main { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+        .intro { text-align: center; max-width: 700px; margin: 0 auto 4rem auto; font-size: 1.2rem; line-height: 1.8; padding: 2rem; opacity: 0; animation: fadeInUp 1s ease-out 0.6s forwards; }
+        .intro h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+        
+        .video-container { width: 100%; margin: 2.5rem auto 1rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 4px solid var(--light); background-color: var(--dark); }
+        .video-container iframe { width: 100%; height: 380px; border: none; }
+        
+        .menu-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+        .bake-card { background: white; border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .bake-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem; }
+        
+        footer { background-color: var(--dark); color: var(--light); text-align: center; padding: 4rem 2rem; margin-top: 2rem; }
+        .social-links { display: flex; justify-content: center; gap: 1.2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .social-btn { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background-color: #3f2d22; color: var(--light); border-radius: 50%; font-size: 1.3rem; text-decoration: none; }
+        .social-btn:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="hamburger-menu" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+        <h1>Bakes by Sen</h1>
+        <p>Handcrafted from scratch, shared with love.</p>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" id="closeBtn"><i class="fa-solid fa-xmark"></i></div>
+        <h2>About the Baker</h2>
+        <p>Hi, I’m Erick. For me, baking is so much more than just following a recipe—it’s a way of sharing a piece of my heart. Over the last decade, I’ve worked in professional kitchens from the Philippines to Saudi Arabia, learning that while technique is vital, it’s the genuine passion you put into every batch that makes the difference.</p>
+        <p>My path has taken me from hands-on creation to leading production teams, and my background in technical operations has taught me to value precision and consistency in everything I make. Baking is my way of connecting with others, and I’m so happy to welcome you to my digital kitchen—thanks for being a part of this journey with me.</p>
+        <a href="mailto:erickvillabroza.ev@gmail.com" class="email-link"><i class="fa-solid fa-envelope"></i> erickvillabroza.ev@gmail.com</a>
+        
+        <div class="sidebar-socials" style="margin-top: 2rem; display: flex; justify-content: center; gap: 15px;">
+            <a href="https://www.facebook.com/ECV190250" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@senpairikz?lang=en" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <main>
+        <section class="intro">
+            <h2>Welcome to my digital kitchen</h2>
+            <p>Flour, butter, and a little bit of patience. No shortcuts, just fresh dough and a genuine passion for baking. That's how every recipe here begins.</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/IzY4qe_m978" title="Watch me make Chimney Cake!" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <section id="blog-posts" style="max-width: 800px; margin: 4rem auto; padding: 2rem;">
+            <h2 style="text-align: center; font-family: 'Playfair Display', serif; color: var(--primary);">My Baking Journal</h2>
+            <div id="posts-container" style="display: flex; flex-direction: column; gap: 2rem;"></div>
+        </section>
+
+        <section class="menu-gallery">
+            <div class="bake-card"><img src="images/chimney-cake.jpg" alt="Fresh Chimney Cake"><h3>Chimney Cake</h3><p>Traditional sweet, spiral-shaped bread with a caramelized crust.</p></div>
+            <div class="bake-card"><img src="images/brulee.jpg" alt="French Brûlée"><h3>French Brûlée</h3><p>Rich vanilla custard topped with perfectly cracked caramelized sugar.</p></div>
+            <div class="bake-card"><img src="images/cannoli.jpg" alt="Sweet Cannoli"><h3>Cannoli</h3><p>Crispy, bubbly Italian pastry shells filled with decadent ricotta cream.</p></div>
+            <div class="bake-card"><img src="images/churros.jpg" alt="Golden Churros"><h3>Churros</h3><p>Golden-fried choux pastry tossed in cinnamon sugar.</p></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://www.facebook.com/ECV190250" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@senpairikz?lang=en" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <p style="font-size: 0.9rem; opacity: 0.8;">&copy; 2026 Senpairikz. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn'), closeBtn = document.getElementById('closeBtn'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('overlay');
+        menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+    </script>
+
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    </script>
+</body>
+</html>
