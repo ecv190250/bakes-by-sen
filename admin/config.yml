@@ -14,5 +14,6 @@ collections:
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Date", name: "date", widget: "datetime"}
-      - {label: "Featured Image", name: "image", widget: "image", required: false}
+      # CHANGE THIS LINE BELOW:
+      - {label: "Featured Image", name: "image", widget: "image", required: false, path: "images"}
       - {label: "Body", name: "body", widget: "markdown"}
