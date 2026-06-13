@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bakes by Sen</title>
-    <link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;500&display=swap)" rel="stylesheet">
-    <link rel="stylesheet" href="[cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { --primary: #d48a44; --dark: #2c1e16; --light: #fcf9f6; }
@@ -15,7 +15,7 @@
         
         header { 
             position: relative;
-            background: linear-gradient(rgba(44, 30, 22, 0.75), rgba(44, 30, 22, 0.75)), url('[images.unsplash.com](https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000)') center/cover; 
+            background: linear-gradient(rgba(44, 30, 22, 0.75), rgba(44, 30, 22, 0.75)), url('https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000') center/cover; 
             color: var(--light); 
             padding: 7rem 1rem; 
             text-align: center; 
@@ -49,6 +49,7 @@
         .bake-card { background: white; border-radius: 12px; padding: 2rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .bake-card img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; }
         
+        /* Gallery Grid - 4 columns in a straight row */
         .menu-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; }
         .gallery-card { background: white; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .gallery-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
@@ -61,6 +62,7 @@
             margin-top: 4rem;
         }
 
+        /* Social Media Row Alignment */
         .social-row {
             display: flex;
             justify-content: center;
@@ -88,6 +90,10 @@
             opacity: 0.75;
             margin-top: 8px;
         }
+
+        /* Responsive safety net */
+        @media (max-width: 768px) { .menu-gallery { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .menu-gallery { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -120,19 +126,19 @@
         </section>
 
         <section class="menu-gallery">
-            <div class="gallery-card"><img src="images/chimney-cake.jpg" alt="Chimney Cake"><h3>Chimney Cake</h3><p>Traditional sweet, spiral-shaped bread.</p></div>
-            <div class="gallery-card"><img src="images/brulee.jpg" alt="French Brûlée"><h3>French Brûlée</h3><p>Rich vanilla custard.</p></div>
-            <div class="gallery-card"><img src="images/cannoli.jpg" alt="Sweet Cannoli"><h3>Cannoli</h3><p>Bubbly Italian pastry shells.</p></div>
-            <div class="gallery-card"><img src="images/churros.jpg" alt="Golden Churros"><h3>Churros</h3><p>Golden-fried choux pastry.</p></div>
+            <div class="gallery-card"><img src="images/chimney-cake.jpg" alt="Chimney Cake"><h3>Chimney Cake</h3><p>Traditional sweet, spiral-shaped bread with a caramelized crust.</p></div>
+            <div class="gallery-card"><img src="images/brulee.jpg" alt="French Brûlée"><h3>French Brûlée</h3><p>Rich vanilla custard topped with perfectly cracked caramelized sugar.</p></div>
+            <div class="gallery-card"><img src="images/cannoli.jpg" alt="Sweet Cannoli"><h3>Cannoli</h3><p>Crispy, bubbly Italian pastry shells filled with decadent ricotta cream.</p></div>
+            <div class="gallery-card"><img src="images/churros.jpg" alt="Golden Churros"><h3>Churros</h3><p>Golden-fried choux pastry tossed in cinnamon sugar.</p></div>
         </section>
     </main>
 
     <footer>
         <div class="social-row">
-            <a href="[facebook.com](https://www.facebook.com/ECV190250)" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-            <a href="[instagram.com](https://www.instagram.com/senpairikz?utm_source=qr)" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
-            <a href="[tiktok.com](https://www.tiktok.com/@senpairikz?lang=en)" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
-            <a href="[linkedin.com](https://www.linkedin.com/in/erick-villabroza-55b14a108/)" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.facebook.com/ECV190250" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@senpairikz?lang=en" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
         </div>
         <p class="copyright">&copy; 2026 Senpairikz. All rights reserved.</p>
     </footer>
@@ -143,12 +149,12 @@
         closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
     </script>
-    <script src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         async function fetchMyFoodPosts() {
             const container = document.getElementById('posts-container');
             try {
-                const response = await fetch(`[api.github.com](https://api.github.com/repos/ecv190250/bakes-by-sen/contents/blog)`);
+                const response = await fetch(`https://api.github.com/repos/ecv190250/bakes-by-sen/contents/blog`);
                 const files = await response.json();
                 for (const file of files.filter(f => f.name.endsWith('.md')).reverse()) {
                     const postRes = await fetch(file.download_url);
