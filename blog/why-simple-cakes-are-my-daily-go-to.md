@@ -1,7 +1,7 @@
 ---
 title: Why Simple Cakes Are My Daily Go-To
 date: 2026-06-14T02:28
-image: https://drive.google.com/file/d/1BMxWbZHF0IUHAMcM1VtTqdPwb3srwq24/view?usp=drivesdk
+image: /images/20251112_225729.jpeg
 ---
 
 In the kitchen, we’re always chasing the "perfect" complex dessert, but at the end of the day, there is nothing like a solid, reliable cake that actually tastes good. I make a lot of high-end desserts, but this basic all-purpose flour cake is something I keep coming back to. It’s consistent, it doesn't break the bank, and it delivers every single time
