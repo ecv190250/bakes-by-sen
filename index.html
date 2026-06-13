@@ -13,21 +13,29 @@
         :root { --primary: #d48a44; --dark: #2c1e16; --light: #fcf9f6; --accent: #e07a5f; }
         body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--light); color: var(--dark); overflow-x: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
         header { position: relative; background: linear-gradient(rgba(44, 30, 22, 0.75), rgba(44, 30, 22, 0.75)), url('https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000') center/cover; color: var(--light); padding: 7rem 1rem; text-align: center; }
         header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; }
+        
+        .hamburger-menu { position: absolute; top: 25px; left: 30px; font-size: 2.2rem; color: var(--light); cursor: pointer; z-index: 100; }
         .sidebar { position: fixed; top: 0; left: -350px; width: 300px; height: 100vh; background-color: var(--light); padding: 2.5rem; transition: left 0.4s; z-index: 1000; overflow-y: auto; }
         .sidebar.active { left: 0; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: 0.4s; z-index: 999; }
         .overlay.active { opacity: 1; visibility: visible; }
+        
         main { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
         .bake-card { background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .bake-card img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; }
+        
+        .menu-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .gallery-card { background: white; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .gallery-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="hamburger-menu" id="menuBtn" style="cursor:pointer; position:absolute; top:25px; left:30px; font-size:2rem;"><i class="fa-solid fa-bars"></i></div>
+        <div class="hamburger-menu" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
         <h1>Bakes by Sen</h1>
     </header>
 
@@ -35,6 +43,10 @@
         <div class="close-btn" id="closeBtn" style="cursor:pointer; font-size:1.5rem; text-align:right;"><i class="fa-solid fa-xmark"></i></div>
         <h2>About the Baker</h2>
         <p>Hi, I’m Erick. Baking is my way of connecting with others, and I’m so happy to welcome you to my digital kitchen.</p>
+        <div style="margin-top: 2rem; display: flex; gap: 15px; justify-content: center;">
+            <a href="https://www.facebook.com/ECV190250" target="_blank"><i class="fab fa-facebook-f" style="font-size:1.5rem;"></i></a>
+            <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank"><i class="fab fa-instagram" style="font-size:1.5rem;"></i></a>
+        </div>
     </div>
     <div class="overlay" id="overlay"></div>
 
@@ -42,6 +54,12 @@
         <section id="blog-posts">
             <h2 style="text-align: center; color: var(--primary);">My Baking Journal</h2>
             <div id="posts-container"></div>
+        </section>
+
+        <section class="menu-gallery">
+            <div class="gallery-card"><img src="images/chimney-cake.jpg" alt="Chimney Cake"><h3>Chimney Cake</h3></div>
+            <div class="gallery-card"><img src="images/brulee.jpg" alt="French Brûlée"><h3>French Brûlée</h3></div>
+            <div class="gallery-card"><img src="images/cannoli.jpg" alt="Sweet Cannoli"><h3>Cannoli</h3></div>
         </section>
     </main>
 
@@ -53,7 +71,6 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
     <script>
         async function fetchMyFoodPosts() {
             const container = document.getElementById('posts-container');
@@ -65,11 +82,6 @@
                 const files = await response.json();
                 const postFiles = files.filter(f => f.name.endsWith('.md')).reverse();
                 
-                if (postFiles.length === 0) {
-                    container.innerHTML = '<p style="text-align:center;">Whipping up the first recipe...</p>';
-                    return;
-                }
-
                 for (const file of postFiles) {
                     const postRes = await fetch(file.download_url);
                     const rawText = await postRes.text();
@@ -83,21 +95,16 @@
                         let image = imageMatch ? imageMatch[1] : '';
                         if(image.startsWith('/')) image = image.substring(1); 
                         
-                        const htmlContent = marked.parse(bodyText);
-                        
                         container.innerHTML += `
                             <div class="bake-card">
                                 ${image ? `<img src="${image}" alt="${title}">` : ''}
                                 <h3>${title}</h3>
-                                <div>${htmlContent}</div>
+                                <div>${marked.parse(bodyText)}</div>
                             </div>
                         `;
                     }
                 }
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = '<p style="text-align:center;">Could not load posts. Check back soon!</p>';
-            }
+            } catch (error) { console.error(error); }
         }
         fetchMyFoodPosts();
     </script>
