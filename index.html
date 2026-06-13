@@ -176,17 +176,40 @@
             try {
                 const response = await fetch(`https://api.github.com/repos/ecv190250/bakes-by-sen/contents/blog`);
                 const files = await response.json();
-                for (const file of files.filter(f => f.name.endsWith('.md')).reverse()) {
+                
+                let allPosts = []; // Create an empty list to hold the posts
+                
+                // 1. Fetch all the posts
+                for (const file of files.filter(f => f.name.endsWith('.md'))) {
                     const postRes = await fetch(file.download_url);
-                    const parts = (await postRes.text()).split('---');
+                    const text = await postRes.text();
+                    const parts = text.split('---');
+                    
                     if (parts.length >= 3) {
-                        const meta = parts[1], body = parts.slice(2).join('---');
+                        const meta = parts[1];
+                        const body = parts.slice(2).join('---');
+                        
                         const title = meta.match(/title:\s*['"]?(.*?)['"]?\n/)?.[1] || 'Fresh out of the oven';
                         let img = meta.match(/image:\s*['"]?(.*?)['"]?\n/)?.[1] || '';
                         if(img.startsWith('/')) img = img.substring(1);
-                        container.innerHTML += `<div class="bake-card">${img ? `<img src="${img}" alt="${title}">` : ''}<h3>${title}</h3><div>${marked.parse(body)}</div></div>`;
+                        
+                        // Grab the exact date from Sveltia
+                        const dateMatch = meta.match(/date:\s*['"]?(.*?)['"]?\n/);
+                        const postDate = dateMatch ? new Date(dateMatch[1]) : new Date(0);
+                        
+                        // Save all the details into our list
+                        allPosts.push({ title, img, body, date: postDate });
                     }
                 }
+                
+                // 2. Sort the list perfectly from Newest to Oldest
+                allPosts.sort((a, b) => b.date - a.date);
+                
+                // 3. Put them on the website
+                for (const post of allPosts) {
+                    container.innerHTML += `<div class="bake-card">${post.img ? `<img src="${post.img}" alt="${post.title}">` : ''}<h3>${post.title}</h3><div>${marked.parse(post.body)}</div></div>`;
+                }
+                
             } catch (e) { console.error(e); }
         }
         fetchMyFoodPosts();
