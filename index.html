@@ -59,8 +59,13 @@
         
         #blog-posts { opacity: 0; animation: elegantFadeUp 1s ease-out 0.8s forwards; }
         
-        .bake-card { background: white; border-radius: 12px; padding: 2rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        /* UPDATED BLOG POST TYPOGRAPHY SPACING */
+        .bake-card { background: white; border-radius: 12px; padding: 2rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; letter-spacing: 0.3px; }
         .bake-card img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; }
+        .bake-card p { margin-bottom: 1.2rem; }
+        .bake-card ul, .bake-card ol { margin-bottom: 1.5rem; margin-left: 1.5rem; }
+        .bake-card li { margin-bottom: 0.5rem; }
+        .bake-card strong { color: var(--dark); }
         
         /* Gallery Grid - 4 columns in a straight row */
         .menu-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; opacity: 0; animation: elegantFadeUp 1s ease-out 1s forwards; }
