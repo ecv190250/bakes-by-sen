@@ -1,7 +1,7 @@
 ---
 title: The Ultimate Chocolate Chip Cookie (12 PCS)
 date: 2026-06-13T22:19
-image: https://drive.google.com/file/d/1mUv9MywPOPXiAUd0XV7o3gj2iqqWvy5s/view?usp=sharing
+image: https://drive.google.com/uc?export=view&id=1mUv9MywPOPXiAUd0XV7o3gj2iqqWvy5s
 ---
 
 There is nothing quite like the smell of fresh cookies wafting through the house. Today, I am sharing my go-to recipe for the ultimate chocolate chip cookies. These are the perfect balance of a set edge and a soft, chewy center.
