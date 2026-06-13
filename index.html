@@ -129,5 +129,71 @@
         });
       }
     </script>
+
+    <script>
+        async function fetchMyFoodPosts() {
+            const container = document.getElementById('posts-container');
+            
+            try {
+                // IMPORTANT: If your GitHub username is NOT 'senpairikz', change it inside the quotes below!
+                const githubUsername = 'ecv190250'; 
+                const repoName = 'bakes-by-sen';
+                
+                // 1. Fetch the list of files from your blog folder
+                const response = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}/contents/blog`);
+                if (!response.ok) throw new Error("Could not fetch");
+                const files = await response.json();
+                
+                // 2. Get the markdown files and reverse them (newest at the top)
+                const postFiles = files.filter(f => f.name.endsWith('.md')).reverse();
+                
+                if (postFiles.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;">Whipping up the first recipe... check back soon!</p>';
+                    return;
+                }
+
+                // 3. Process each food post
+                for (const file of postFiles) {
+                    const postRes = await fetch(file.download_url);
+                    const rawText = await postRes.text();
+                    
+                    const parts = rawText.split('---');
+                    if (parts.length >= 3) {
+                        const metaData = parts[1];
+                        const bodyText = parts.slice(2).join('---').trim();
+                        
+                        const titleMatch = metaData.match(/title:\s*['"]?(.*?)['"]?\n/);
+                        const imageMatch = metaData.match(/image:\s*['"]?(.*?)['"]?\n/);
+                        const dateMatch = metaData.match(/date:\s*['"]?(.*?)['"]?\n/);
+                        
+                        const title = titleMatch ? titleMatch[1] : 'Fresh out of the oven';
+                        let image = imageMatch ? imageMatch[1] : '';
+                        if(image.startsWith('/')) image = image.substring(1); 
+                        const date = dateMatch ? new Date(dateMatch[1]).toLocaleDateString() : '';
+                        
+                        const formattedBody = bodyText.replace(/\n/g, '<br>');
+                        
+                        // 4. Put the post into your beautiful display case
+                        const postHTML = `
+                            <div class="bake-card" style="text-align: left; padding: 2.5rem; margin-bottom: 2rem;">
+                                ${image ? `<img src="${image}" alt="${title}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem;">` : ''}
+                                <h3 style="margin-top: 0; font-size: 2rem; color: var(--primary);">${title}</h3>
+                                <p style="font-size: 0.9rem; color: #888; margin-bottom: 1.5rem;">${date}</p>
+                                <div style="line-height: 1.8; color: var(--dark);">
+                                    ${formattedBody}
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += postHTML;
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="text-align:center;">Setting up the display case... Check back in a moment!</p>';
+            }
+        }
+        
+        fetchMyFoodPosts();
+    </script>
 </body>
 </html>
