@@ -1,7 +1,7 @@
 ---
 title: Simple Classic Vanilla Cake
 date: 2026-06-14T20:34
-image: https://drive.google.com/file/d/1okYP107JxngjzKcegZkdvaiAJTLaIVAF/view?usp=drive_link
+image: /images/20251112_225729.jpeg
 ---
 
 Some days, you don't need fancy flavors or complicated decorations. You just need a great, classic vanilla cake. This is my "Everyday Cake"—it’s light, fluffy, and comes together so quickly that it’s become my absolute favorite for busy afternoons.
