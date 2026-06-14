@@ -73,6 +73,11 @@
         .bake-card ul, .bake-card ol { margin-bottom: 1.5rem; margin-left: 1.5rem; }
         .bake-card li { margin-bottom: 0.5rem; }
         .bake-card strong { color: var(--dark); }
+
+        /* Comment Button Styling */
+        .comment-btn { display: inline-flex; align-items: center; justify-content: center; background-color: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: 0.2s; font-family: 'Poppins', sans-serif; }
+        .comment-btn:hover { background-color: var(--dark); }
+        .comment-btn i { margin-right: 8px; }
         
         /* Gallery Grid - 4 columns in a straight row */
         .menu-gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; opacity: 0; animation: elegantFadeUp 1s ease-out 1s forwards; }
@@ -177,7 +182,33 @@
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <script>
+        // Giscus Dynamic Loading Function
+        window.loadComments = function(title, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clears the button
+            
+            const script = document.createElement('script');
+            script.src = "https://giscus.app/client.js";
+            script.setAttribute("data-repo", "ecv190250/bakes-by-sen");
+            script.setAttribute("data-repo-id", "R_kgDOS5FT9g");
+            script.setAttribute("data-category", "General");
+            script.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
+            script.setAttribute("data-mapping", "specific");
+            script.setAttribute("data-term", title); // This maps it strictly to the recipe name!
+            script.setAttribute("data-strict", "0");
+            script.setAttribute("data-reactions-enabled", "1");
+            script.setAttribute("data-emit-metadata", "0");
+            script.setAttribute("data-input-position", "bottom");
+            script.setAttribute("data-theme", "light");
+            script.setAttribute("data-lang", "en");
+            script.setAttribute("crossorigin", "anonymous");
+            script.async = true;
+            
+            container.appendChild(script);
+        };
+
         async function fetchMyFoodPosts() {
             const container = document.getElementById('posts-container');
             try {
@@ -204,11 +235,11 @@
                         let img = imgMatch ? imgMatch[1].trim() : '';
                         
                         if (img) {
-                            if (img.startsWith('/')) img = img.substring(1); // Keep paths clean
-                            img = encodeURI(img); // Magically fixes spaces in file names!
+                            if (img.startsWith('/')) img = img.substring(1); 
+                            img = encodeURI(img); 
                         }
                         
-                        // Grab the exact date from Sveltia
+                        // Grab the exact date
                         const dateMatch = meta.match(/date:\s*['"]?(.*?)['"]?\n/);
                         const postDate = dateMatch ? new Date(dateMatch[1]) : new Date(0);
                         
@@ -218,13 +249,23 @@
                 
                 allPosts.sort((a, b) => b.date - a.date);
                 
-                // Put them on the website with the new "onerror" backup feature
+                // Put them on the website with the new Comments Button!
                 for (const post of allPosts) {
+                    const safeTitle = post.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    const escapedTitle = post.title.replace(/'/g, "\\'"); // Protects against apostrophes in titles
+                    
                     container.innerHTML += `
                         <div class="bake-card">
                             ${post.img ? `<img src="${post.img}" alt="${post.title}" onerror="this.style.display='none'">` : ''}
                             <h3>${post.title}</h3>
                             <div>${marked.parse(post.body)}</div>
+                            
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;">
+                            <div id="giscus-container-${safeTitle}" style="text-align: center;">
+                                <button class="comment-btn" onclick="loadComments('${escapedTitle}', 'giscus-container-${safeTitle}')">
+                                    <i class="fa-solid fa-comments"></i> Read & Write Comments
+                                </button>
+                            </div>
                         </div>`;
                 }
                 
