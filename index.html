@@ -36,10 +36,8 @@
         header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
         header p { font-size: 1.3rem; font-style: italic; color: var(--primary); margin-top: 15px; opacity: 0; animation: elegantFadeUp 1s ease-out 0.3s forwards; }
 
-        /* THE 3-LINE MENU IS BACK */
         .hamburger-menu { position: absolute; top: 25px; left: 20px; font-size: 2.2rem; color: var(--light); cursor: pointer; z-index: 100; opacity: 0; animation: elegantFadeUp 1s ease-out forwards; }
 
-        /* THE SIDEBAR IS BACK */
         .sidebar {
             position: fixed; top: 0; left: -350px; width: 300px; height: 100vh;
             background-color: var(--light); padding: 2.5rem; transition: left 0.4s;
@@ -70,7 +68,7 @@
         .suggestion-title { font-weight: 500; }
         
         /* ------------------------------------- */
-        /* RECIPE CARDS                          */
+        /* RECIPE CARDS & BUTTONS                */
         /* ------------------------------------- */
         .bake-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 1s forwards; }
         .bake-card img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem; }
@@ -78,10 +76,33 @@
         .bake-card ul, .bake-card ol { margin-bottom: 1.5rem; margin-left: 1.5rem; }
         .bake-card li { margin-bottom: 0.5rem; }
         
+        .action-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 1.5rem; }
+        .comment-btn { display: inline-flex; align-items: center; justify-content: center; background-color: var(--primary); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: 0.2s; font-family: 'Poppins', sans-serif; }
+        .comment-btn:hover { background-color: var(--dark); }
+        .comment-btn i { margin-right: 8px; }
+        .print-btn { background-color: #8c6a51; } /* Darker beige/brown for contrast */
+        
         footer { text-align: center; padding: 3rem 1rem; background: var(--dark); color: var(--light); margin-top: 4rem; opacity: 0; animation: elegantFadeUp 1s ease-out 1.2s forwards;}
         .social-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .social-btn { display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; background-color: var(--primary); color: white; border-radius: 50%; text-decoration: none; font-size: 1.2rem; transition: 0.2s; }
         .social-btn:hover { background-color: #fff; color: var(--dark); transform: scale(1.1); }
+
+        /* ------------------------------------- */
+        /* PRINT STYLING MAGIC                   */
+        /* ------------------------------------- */
+        @media print {
+            body { background: white; color: black; }
+            /* Hide everything when printing, EXCEPT the active recipe card */
+            body.printing-card > *:not(main) { display: none !important; }
+            body.printing-card main > *:not(#posts-container) { display: none !important; }
+            body.printing-card #posts-container > .bake-card:not(.print-active) { display: none !important; }
+            
+            /* Remove shadows and borders for the paper */
+            .bake-card.print-active { box-shadow: none; border: none; margin: 0; padding: 0; page-break-inside: avoid; }
+            
+            /* Hide the buttons from the paper */
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -108,7 +129,7 @@
     <main>
         <p class="intro-quote">"Flour, butter, and a little bit of patience. That's how every recipe here begins—no shortcuts, just a genuine passion for baking."</p>
 
-        <div class="search-wrapper">
+        <div class="search-wrapper no-print">
             <i class="fa-solid fa-search search-icon"></i>
             <input type="text" id="searchBar" placeholder="Search for a recipe or ingredient (e.g., Cake, Vanilla, Cookie)..." autocomplete="off">
             <div id="suggestionsBox" class="suggestions-box"></div>
@@ -138,6 +159,47 @@
         menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
         closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        // Print Recipe Logic
+        window.printRecipe = function(btnElement) {
+            const card = btnElement.closest('.bake-card');
+            document.body.classList.add('printing-card');
+            card.classList.add('print-active');
+            window.print();
+            
+            // Remove classes after the print menu closes
+            setTimeout(() => {
+                document.body.classList.remove('printing-card');
+                card.classList.remove('print-active');
+            }, 500);
+        };
+
+        // Giscus Comment Load Logic
+        window.loadComments = function(title, containerId, btnElement) {
+            const container = document.getElementById(containerId);
+            if(container.innerHTML !== '') return; // Prevent double clicking
+            
+            btnElement.style.display = 'none'; // Hide comment button when opened
+            
+            const giscusScript = document.createElement('script');
+            giscusScript.src = "https://giscus.app/client.js";
+            giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
+            giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
+            giscusScript.setAttribute("data-category", "General");
+            giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
+            giscusScript.setAttribute("data-mapping", "specific");
+            giscusScript.setAttribute("data-term", title);
+            giscusScript.setAttribute("data-strict", "0");
+            giscusScript.setAttribute("data-reactions-enabled", "1");
+            giscusScript.setAttribute("data-emit-metadata", "0");
+            giscusScript.setAttribute("data-input-position", "bottom");
+            giscusScript.setAttribute("data-theme", "light");
+            giscusScript.setAttribute("data-lang", "en");
+            giscusScript.setAttribute("crossorigin", "anonymous");
+            giscusScript.async = true;
+            
+            container.appendChild(giscusScript);
+        };
 
         // Search & Recipe Logic
         let globalRecipes = [];
@@ -177,37 +239,29 @@
                 allPosts.sort((a, b) => b.date - a.date);
                 
                 for (const post of allPosts) {
+                    const safeTitle = post.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    const escapedTitle = post.title.replace(/'/g, "\\'");
+                    
                     const div = document.createElement('div');
                     div.className = 'bake-card';
                     div.innerHTML = `
                         ${post.img ? `<img src="${post.img}" alt="${post.title}" onerror="this.style.display='none'">` : ''}
                         <h3>${post.title}</h3>
                         <div>${marked.parse(post.body)}</div>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;">
+                        
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;" class="no-print">
+                        
+                        <div class="action-buttons no-print">
+                            <button class="comment-btn" onclick="loadComments('${escapedTitle}', 'giscus-${safeTitle}', this)">
+                                <i class="fa-solid fa-comments"></i> Comments
+                            </button>
+                            <button class="comment-btn print-btn" onclick="printRecipe(this)">
+                                <i class="fa-solid fa-print"></i> Print
+                            </button>
+                        </div>
+                        
+                        <div id="giscus-${safeTitle}" class="no-print" style="margin-top: 2rem;"></div>
                     `;
-                    
-                    const giscusDiv = document.createElement('div');
-                    giscusDiv.style.marginTop = "2rem";
-                    
-                    const giscusScript = document.createElement('script');
-                    giscusScript.src = "https://giscus.app/client.js";
-                    giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
-                    giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
-                    giscusScript.setAttribute("data-category", "General");
-                    giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
-                    giscusScript.setAttribute("data-mapping", "specific");
-                    giscusScript.setAttribute("data-term", post.title);
-                    giscusScript.setAttribute("data-strict", "0");
-                    giscusScript.setAttribute("data-reactions-enabled", "1");
-                    giscusScript.setAttribute("data-emit-metadata", "0");
-                    giscusScript.setAttribute("data-input-position", "bottom");
-                    giscusScript.setAttribute("data-theme", "light");
-                    giscusScript.setAttribute("data-lang", "en");
-                    giscusScript.setAttribute("crossorigin", "anonymous");
-                    giscusScript.async = true;
-                    
-                    giscusDiv.appendChild(giscusScript);
-                    div.appendChild(giscusDiv);
                     
                     container.appendChild(div);
                     globalRecipes.push({ title: post.title, img: post.img, body: post.body, element: div });
