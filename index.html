@@ -36,17 +36,32 @@
         header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
         header p { font-size: 1.3rem; font-style: italic; color: var(--primary); margin-top: 15px; opacity: 0; animation: elegantFadeUp 1s ease-out 0.3s forwards; }
 
+        /* THE 3-LINE MENU IS BACK */
+        .hamburger-menu { position: absolute; top: 25px; left: 20px; font-size: 2.2rem; color: var(--light); cursor: pointer; z-index: 100; opacity: 0; animation: elegantFadeUp 1s ease-out forwards; }
+
+        /* THE SIDEBAR IS BACK */
+        .sidebar {
+            position: fixed; top: 0; left: -350px; width: 300px; height: 100vh;
+            background-color: var(--light); padding: 2.5rem; transition: left 0.4s;
+            z-index: 1000; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+        }
+        .sidebar.active { left: 0; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: 0.4s; z-index: 999; }
+        .overlay.active { opacity: 1; visibility: visible; }
+
         main { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+        .intro-quote { text-align: center; font-size: 1.2rem; font-style: italic; margin-bottom: 3rem; color: var(--dark); opacity: 0; animation: elegantFadeUp 1s ease-out 0.6s forwards; }
         
         /* ------------------------------------- */
         /* SMART SEARCH BAR STYLING              */
         /* ------------------------------------- */
-        .search-wrapper { position: relative; max-width: 100%; margin-bottom: 4rem; animation: elegantFadeUp 1s ease-out 0.5s forwards; opacity: 0; }
+        .search-wrapper { position: relative; max-width: 100%; margin-bottom: 4rem; animation: elegantFadeUp 1s ease-out 0.8s forwards; opacity: 0; }
         .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #999; font-size: 1.2rem; }
         #searchBar { width: 100%; padding: 1.2rem 1.5rem 1.2rem 50px; border: 2px solid transparent; border-radius: 30px; font-size: 1.1rem; font-family: 'Poppins', sans-serif; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
         #searchBar:focus { border-color: var(--primary); box-shadow: 0 5px 20px rgba(212, 138, 68, 0.2); }
         
-        /* Autocomplete Dropdown */
         .suggestions-box { position: absolute; top: 110%; left: 0; right: 0; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; z-index: 1000; display: none; }
         .suggestion-item { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
         .suggestion-item:last-child { border-bottom: none; }
@@ -57,13 +72,13 @@
         /* ------------------------------------- */
         /* RECIPE CARDS                          */
         /* ------------------------------------- */
-        .bake-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 0.8s forwards; }
+        .bake-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 1s forwards; }
         .bake-card img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem; }
         .bake-card h3 { font-size: 2rem; margin-bottom: 1rem; color: var(--dark); }
         .bake-card ul, .bake-card ol { margin-bottom: 1.5rem; margin-left: 1.5rem; }
         .bake-card li { margin-bottom: 0.5rem; }
         
-        footer { text-align: center; padding: 3rem 1rem; background: var(--dark); color: var(--light); margin-top: 4rem; }
+        footer { text-align: center; padding: 3rem 1rem; background: var(--dark); color: var(--light); margin-top: 4rem; opacity: 0; animation: elegantFadeUp 1s ease-out 1.2s forwards;}
         .social-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .social-btn { display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; background-color: var(--primary); color: white; border-radius: 50%; text-decoration: none; font-size: 1.2rem; transition: 0.2s; }
         .social-btn:hover { background-color: #fff; color: var(--dark); transform: scale(1.1); }
@@ -72,11 +87,27 @@
 <body>
 
     <header>
+        <div class="hamburger-menu" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
         <h1>Bakes by Sen</h1>
         <p>Handcrafted from scratch, shared with love.</p>
     </header>
 
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" id="closeBtn" style="cursor:pointer; font-size:1.5rem; text-align:right; margin-bottom: 1rem;">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <h2>About the Baker</h2>
+        <p style="margin-top: 1rem;">Hi, I'm Erick. For me, baking is so much more than just following a recipe—it's a way of sharing a piece of my heart. Over the last decade, I've worked in professional kitchens from the Philippines to Saudi Arabia, learning that while technique is vital, it's the genuine passion you put into every batch that makes the difference.</p>
+        <p style="margin-top: 1rem;">My path has taken me from hands-on creation to leading production teams, and my background in technical operations has taught me to value precision and consistency in everything I make. Baking is my way of connecting with others.</p>
+        <a href="mailto:erickvillabroza.ev@gmail.com" style="display:block; margin-top: 1.5rem; color: var(--dark); text-decoration: none;">
+            <i class="fa-solid fa-envelope" style="color: var(--primary);"></i> erickvillabroza.ev@gmail.com
+        </a>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
     <main>
+        <p class="intro-quote">"Flour, butter, and a little bit of patience. That's how every recipe here begins—no shortcuts, just a genuine passion for baking."</p>
+
         <div class="search-wrapper">
             <i class="fa-solid fa-search search-icon"></i>
             <input type="text" id="searchBar" placeholder="Search for a recipe or ingredient (e.g., Cake, Vanilla, Cookie)..." autocomplete="off">
@@ -98,7 +129,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        // Global array to hold all recipe data for the smart search
+        // Sidebar Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
+        closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+
+        // Search & Recipe Logic
         let globalRecipes = [];
         const searchBar = document.getElementById('searchBar');
         const suggestionsBox = document.getElementById('suggestionsBox');
@@ -111,7 +152,6 @@
                 
                 let allPosts = []; 
                 
-                // 1. Fetch and Parse
                 for (const file of files.filter(f => f.name.endsWith('.md'))) {
                     const postRes = await fetch(file.download_url);
                     const text = await postRes.text();
@@ -134,10 +174,8 @@
                     }
                 }
                 
-                // Sort Newest First
                 allPosts.sort((a, b) => b.date - a.date);
                 
-                // 2. Render to Screen and Save to Global Search
                 for (const post of allPosts) {
                     const div = document.createElement('div');
                     div.className = 'bake-card';
@@ -148,7 +186,6 @@
                         <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;">
                     `;
                     
-                    // Attach Giscus comment block to each post safely
                     const giscusDiv = document.createElement('div');
                     giscusDiv.style.marginTop = "2rem";
                     
@@ -173,34 +210,23 @@
                     div.appendChild(giscusDiv);
                     
                     container.appendChild(div);
-                    
-                    // Save for search engine
                     globalRecipes.push({ title: post.title, img: post.img, body: post.body, element: div });
                 }
-                
             } catch (e) { console.error("Error loading recipes:", e); }
         }
 
-        // ------------------------------------- 
-        // THE SMART SEARCH ENGINE LOGIC
-        // ------------------------------------- 
         searchBar.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             suggestionsBox.innerHTML = '';
             
             if (query === '') {
                 suggestionsBox.style.display = 'none';
-                globalRecipes.forEach(r => r.element.style.display = 'block'); // Show all if empty
+                globalRecipes.forEach(r => r.element.style.display = 'block');
                 return;
             }
 
-            // Find matches in Title OR Body
-            const matches = globalRecipes.filter(r => 
-                r.title.toLowerCase().includes(query) || 
-                r.body.toLowerCase().includes(query)
-            );
+            const matches = globalRecipes.filter(r => r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query));
 
-            // Build Dropdown
             if (matches.length > 0) {
                 suggestionsBox.style.display = 'block';
                 matches.forEach(match => {
@@ -210,8 +236,6 @@
                         ${match.img ? `<img src="${match.img}" class="suggestion-img" onerror="this.style.display='none'">` : `<div style="width:45px; height:45px; background:#f0f0f0; border-radius:8px;"></div>`}
                         <span class="suggestion-title">${match.title}</span>
                     `;
-                    
-                    // When clicked, lock in the search
                     item.onclick = () => {
                         searchBar.value = match.title;
                         suggestionsBox.style.display = 'none';
@@ -222,12 +246,9 @@
             } else {
                 suggestionsBox.style.display = 'none';
             }
-
-            // Filter the actual big cards on the screen
             filterDisplayedRecipes(query);
         });
 
-        // Hides or shows cards based on the typed query
         function filterDisplayedRecipes(query) {
             globalRecipes.forEach(r => {
                 const isMatch = r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query);
@@ -235,14 +256,12 @@
             });
         }
 
-        // Close dropdown if user clicks somewhere else on the screen
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-wrapper')) {
                 suggestionsBox.style.display = 'none';
             }
         });
 
-        // Start the engine
         fetchMyFoodPosts();
     </script>
 </body>
