@@ -39,7 +39,7 @@
         .hamburger-menu { position: absolute; top: 25px; left: 20px; font-size: 2.2rem; color: var(--light); cursor: pointer; z-index: 100; opacity: 0; animation: elegantFadeUp 1s ease-out forwards; }
 
         /* ------------------------------------- */
-        /* NEW TOP BAR (SEARCH + SOCIALS)        */
+        /* TOP BAR (SEARCH + SOCIALS)            */
         /* ------------------------------------- */
         .top-bar {
             position: absolute;
@@ -54,7 +54,7 @@
         }
         
         .search-wrapper { position: relative; width: 220px; }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--dark); font-size: 0.9rem; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--dark); font-size: 0.9rem; z-index: 2; }
         #searchBar { 
             width: 100%; 
             padding: 0.6rem 1rem 0.6rem 35px; 
@@ -111,14 +111,33 @@
         .comment-btn i { margin-right: 8px; }
         .print-btn { background-color: #8c6a51; }
         
-        /* Cleaned up footer */
         footer { text-align: center; padding: 2rem 1rem; background: var(--dark); color: var(--light); margin-top: 2rem; opacity: 0; animation: elegantFadeUp 1s ease-out 1.2s forwards;}
 
-        /* Responsive Safety Net for Top Bar */
+        /* ------------------------------------- */
+        /* SMART MOBILE UI MAGIC                 */
+        /* ------------------------------------- */
         @media (max-width: 850px) {
-            .top-bar { position: relative; top: 0; right: 0; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
-            header { padding-top: 6rem; }
-            .hamburger-menu { top: 25px; }
+            header { padding-top: 6rem; padding-bottom: 3rem; }
+            header h1 { font-size: 2.8rem; margin-top: 1rem; }
+            
+            /* Break the desktop layout for the top bar */
+            .top-bar { position: static; display: block; animation: none; opacity: 1; }
+            
+            /* Pin socials to the top right */
+            .top-bar .social-row { position: absolute; top: 25px; right: 20px; gap: 8px; animation: elegantFadeUp 1s ease-out 0.3s forwards; opacity: 0; }
+            .top-bar .social-btn { width: 32px; height: 32px; font-size: 0.9rem; }
+            
+            /* Search bar spans neatly under the title */
+            .search-wrapper { margin: 2rem auto 0 auto; width: 90%; max-width: 400px; animation: elegantFadeUp 1s ease-out 0.6s forwards; opacity: 0; }
+            #searchBar { font-size: 1rem; padding: 0.8rem 1rem 0.8rem 45px; }
+            .search-icon { left: 18px; font-size: 1rem; }
+            
+            /* Adjust recipe cards for small screens */
+            main { padding: 2rem 1rem; }
+            .bake-card { padding: 1.5rem; }
+            .bake-card h3 { font-size: 1.6rem; }
+            .action-buttons { flex-direction: column; width: 100%; }
+            .comment-btn { width: 100%; }
         }
 
         /* ------------------------------------- */
