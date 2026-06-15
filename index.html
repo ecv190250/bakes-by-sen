@@ -242,6 +242,16 @@
                     const safeTitle = post.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
                     const escapedTitle = post.title.replace(/'/g, "\\'");
                     
+                    // THIS IS THE NEW RULE: Check if it is an intro post
+                    const isIntroPost = post.title.toLowerCase().includes('welcome');
+                    
+                    // Only generate the print button HTML if it is NOT an intro post
+                    const printButtonHTML = isIntroPost ? '' : `
+                        <button class="comment-btn print-btn" onclick="printRecipe(this)">
+                            <i class="fa-solid fa-print"></i> Print
+                        </button>
+                    `;
+                    
                     const div = document.createElement('div');
                     div.className = 'bake-card';
                     div.innerHTML = `
@@ -255,9 +265,7 @@
                             <button class="comment-btn" onclick="loadComments('${escapedTitle}', 'giscus-${safeTitle}', this)">
                                 <i class="fa-solid fa-comments"></i> Comments
                             </button>
-                            <button class="comment-btn print-btn" onclick="printRecipe(this)">
-                                <i class="fa-solid fa-print"></i> Print
-                            </button>
+                            ${printButtonHTML}
                         </div>
                         
                         <div id="giscus-${safeTitle}" class="no-print" style="margin-top: 2rem;"></div>
