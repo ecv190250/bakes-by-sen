@@ -63,10 +63,10 @@
             font-size: 0.9rem; 
             font-family: 'Poppins', sans-serif; 
             outline: none; 
-            background: rgba(255, 255, 255, 0.9);
+            background: white; /* Changed to solid white */
             transition: 0.3s; 
         }
-        #searchBar:focus { background: white; box-shadow: 0 0 15px rgba(212, 138, 68, 0.5); }
+        #searchBar:focus { box-shadow: 0 0 15px rgba(212, 138, 68, 0.5); }
         
         .suggestions-box { position: absolute; top: 115%; left: 0; right: 0; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; z-index: 1000; display: none; color: var(--dark); text-align: left; }
         .suggestion-item { padding: 0.8rem 1rem; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
@@ -120,7 +120,7 @@
             header { padding-top: 6rem; padding-bottom: 3rem; }
             header h1 { font-size: 2.8rem; margin-top: 1rem; }
             
-            /* Break the desktop layout for the top bar */
+            /* Allow the top bar to drop naturally below the text */
             .top-bar { position: static; display: block; animation: none; opacity: 1; }
             
             /* Pin socials to the top right */
@@ -158,6 +158,9 @@
     <header>
         <div class="hamburger-menu" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
         
+        <h1>Bakes by Sen</h1>
+        <p>Handcrafted from scratch, shared with love.</p>
+
         <div class="top-bar no-print">
             <div class="search-wrapper">
                 <i class="fa-solid fa-search search-icon"></i>
@@ -172,9 +175,6 @@
                 <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
             </div>
         </div>
-
-        <h1>Bakes by Sen</h1>
-        <p>Handcrafted from scratch, shared with love.</p>
     </header>
 
     <div class="sidebar" id="sidebar">
