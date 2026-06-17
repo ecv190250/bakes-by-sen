@@ -25,8 +25,6 @@ This isn't a complex recipe—it's my way of turning a simple breakfast into a m
 4. **The Finish:** Drizzle the melted Kinder and Belgian chocolate in a swirling motion over the cream cheese and berries.
 5. **Pairing:** Serve immediately alongside your favorite coffee.
 
-### Why It Works for a Work Morning
-
 ### The Routine
 
 I don't overthink it. I set the donut, add the whipped cream cheese, arrange the fresh berries, and finish with a quick drizzle of chocolate. It takes less time than it looks, but it completely changes the energy of my morning.
