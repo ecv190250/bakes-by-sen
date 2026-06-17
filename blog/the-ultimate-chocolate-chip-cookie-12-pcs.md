@@ -4,6 +4,8 @@ date: 2026-06-13T22:19
 image: /images/Chocolate chips cookies.jpg
 ---
 
+![](/images/IMG_3955.JPG)
+
 There is nothing quite like the smell of fresh cookies wafting through the house. Today, I am sharing my go-to recipe for the ultimate chocolate chip cookies. These are the perfect balance of a set edge and a soft, chewy center.
 
 **Yields:** 12 cookies **Prep time:** 15 minutes **Bake time:** 10 minutes
