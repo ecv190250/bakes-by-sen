@@ -13,7 +13,7 @@ This isn't a complex recipe—it's my way of turning a simple breakfast into a m
 - **The Base:** A soft, glazed donut (the perfect sweet foundation).
 - **The Cream:** Whipped cream cheese, lightened up to provide a tangy, velvety contrast to the sweet donut.
 - **The Toppings:**
-    - **Fresh Fruit:** A mix of fresh strawberries, blackberries, and raspberries for brightness and acidity.
+    - **Fresh Fruit:** A mix of fresh strawberries, blueberry, and raspberries for brightness and acidity.
     - **The Indulgence:** A drizzle of Kinder chocolate and Belgian chocolate, swirled together.
 - **The Essential:** A hot, fresh cup of coffee.
 
