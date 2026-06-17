@@ -32,6 +32,7 @@
             padding: 8rem 1rem 6rem 1rem; 
             text-align: center; 
             width: 100%;
+            z-index: 50; /* THIS IS THE FIX: Forces the header and its dropdown to sit above the page text */
         }
         header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
         header p { font-size: 1.3rem; font-style: italic; color: var(--primary); margin-top: 15px; opacity: 0; animation: elegantFadeUp 1s ease-out 0.3s forwards; }
@@ -63,7 +64,7 @@
             font-size: 0.9rem; 
             font-family: 'Poppins', sans-serif; 
             outline: none; 
-            background: white; /* Changed to solid white */
+            background: white; 
             transition: 0.3s; 
         }
         #searchBar:focus { box-shadow: 0 0 15px rgba(212, 138, 68, 0.5); }
