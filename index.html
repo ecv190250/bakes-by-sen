@@ -186,13 +186,13 @@
         <div class="sencal-container" id="sencal-app">
             <div class="sencal-header">
                 <h2>Sencal AI</h2>
-                <p>The Smart Baking Diagnoser. Analyze and perfect your recipe.</p>
+                <p>The Universal Baking Diagnoser. Analyze and perfect your recipe.</p>
             </div>
             
             <div class="sencal-inputs" style="margin-bottom: 20px;">
                 <div class="input-group" style="grid-column: 1 / -1;">
                     <label>What are you baking?</label>
-                    <input type="text" id="sc-target" placeholder="e.g., Chimney Cake, Sourdough, Cookie, Sponge Cake" oninput="runSencal()">
+                    <input type="text" id="sc-target" placeholder="e.g., Sourdough, Croissant, Tart, Choux, Muffin, Chimney Cake..." oninput="runSencal()">
                 </div>
             </div>
 
@@ -266,7 +266,7 @@
             setTimeout(() => { document.body.classList.remove('printing-sencal'); }, 500);
         }
 
-        // THE NEW SMART ENGINE LOGIC
+        // THE UNIVERSAL SMART BAKING ENGINE
         function runSencal() {
             const target = document.getElementById('sc-target').value.toLowerCase().trim();
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
@@ -283,7 +283,7 @@
             const outputBox = document.getElementById('sencal-output');
             if (flour <= 0) { outputBox.style.display = 'none'; return; }
 
-            // Math Engine
+            // Universal Math Engine
             const trueFlour = flour + (starter * 0.5);
             // Liquid milk is ~87% water. Eggs are ~75% water. Milk powder adds solids, not hydration.
             const trueWater = water + (starter * 0.5) + (milkLiq * 0.87) + (eggs * 0.75); 
@@ -294,70 +294,108 @@
             const saltPct = (salt / trueFlour) * 100;
             const yeastPct = (yeast / trueFlour) * 100;
 
-            // Baseline Detection
+            // Universal Baseline Detection
             let detectedType = "Standard Lean Bread";
+            let typeIcon = "🥖";
             let idealTemp = "220°C (430°F)";
             let idealTime = "30-40 mins";
             let procedure = "Autolyse, knead until windowpane, bulk ferment, shape, proof, score, and bake with steam.";
 
             if (target.includes("chimney") || target.includes("kürtőskalács")) {
-                detectedType = "Chimney Cake (Kürtőskalács)";
-                idealTemp = "200°C (400°F)";
-                idealTime = "15-20 mins (Rotate frequently)";
+                detectedType = "Chimney Cake (Kürtőskalács)"; typeIcon = "🥐";
+                idealTemp = "200°C (400°F)"; idealTime = "15-20 mins (Rotate frequently)";
                 procedure = "Knead until smooth. Proof until doubled. Divide, roll into long ropes. Wrap around a greased, pre-warmed wooden spit. Brush with butter, roll in sugar, and bake until caramelized.";
-            } else if (target.includes("cookie")) {
-                detectedType = "Cookie Dough";
-                idealTemp = "180°C (350°F)";
-                idealTime = "10-15 mins";
-                procedure = "Cream butter and sugar. Add eggs. Fold in dry ingredients. Chill dough for at least 2 hours to prevent spreading. Scoop and bake.";
-            } else if (target.includes("cake") || target.includes("sponge")) {
-                detectedType = "Cake Batter";
-                idealTemp = "175°C (350°F)";
-                idealTime = "25-35 mins";
-                procedure = "Cream fats and sugar until light and fluffy. Slowly add eggs. Alternate folding in dry ingredients and liquids. Do not overmix to avoid gluten development. Bake until a skewer comes out clean.";
-            } else if (target.includes("brioche") || target.includes("sweet") || fatPct > 15 || sugarPct > 10) {
-                detectedType = "Enriched Dough (Brioche style)";
-                idealTemp = "190°C (375°F)";
-                idealTime = "25-30 mins";
-                procedure = "Knead flour, liquids, and yeast until strong gluten forms. Slowly incorporate cold butter cubes until fully absorbed. Proof cold overnight for best flavor and handling.";
+            } 
+            else if (target.includes("croissant") || target.includes("puff") || target.includes("danish") || target.includes("laminated")) {
+                detectedType = "Laminated Pastry"; typeIcon = "🥐";
+                idealTemp = "200°C (400°F)"; idealTime = "15-25 mins";
+                procedure = "Mix base dough (détrempe) and chill. Enclose cold butter block (beurrage). Perform series of folds (tourage) keeping dough cold to create layers. Proof carefully below 27°C/80°F so butter doesn't melt, egg wash, and bake.";
+            }
+            else if (target.includes("pie") || target.includes("tart") || target.includes("shortcrust") || target.includes("sucrée") || target.includes("brisée")) {
+                detectedType = "Shortcrust / Tart Dough"; typeIcon = "🥧";
+                idealTemp = "190°C (375°F)"; idealTime = "15-25 mins (Blind bake)";
+                procedure = "Cut cold fat into flour until sandy texture (sablage). Bind with minimal cold liquid. Do not knead to avoid gluten development. Chill thoroughly before rolling and blind baking.";
+            }
+            else if (target.includes("choux") || target.includes("eclair") || target.includes("profiterole")) {
+                detectedType = "Choux Pastry"; typeIcon = "🥐";
+                idealTemp = "200°C (400°F) then lower to 170°C (340°F)"; idealTime = "30-40 mins";
+                procedure = "Boil water, milk, fat, and salt. Vigorously beat in flour and cook until it forms a film (panade). Cool slightly, then beat in eggs one by one until it reaches a 'V' shape dropping consistency. Pipe and bake without opening the oven door.";
+            }
+            else if (target.includes("cookie") || target.includes("brownie")) {
+                detectedType = "Cookie / Dense Batter"; typeIcon = "🍪";
+                idealTemp = "180°C (350°F)"; idealTime = "10-15 mins";
+                procedure = "Cream butter and sugar to incorporate air. Add eggs and vanilla. Fold in dry ingredients just until combined. Chill dough for at least 2 hours to control spreading. Scoop and bake.";
+            } 
+            else if (target.includes("muffin") || target.includes("quick") || target.includes("scone")) {
+                detectedType = "Quick Bread / Muffin"; typeIcon = "🧁";
+                idealTemp = "200°C (400°F) for 5 mins, then 175°C (350°F)"; idealTime = "15-25 mins";
+                procedure = "Mix dry ingredients in one bowl. Mix wet ingredients in another. Fold wet into dry until *just* combined (lumps are fine). Overmixing causes tunneling and toughness. Bake immediately.";
+            }
+            else if (target.includes("cake") || target.includes("sponge") || target.includes("genoise")) {
+                detectedType = "Cake Batter"; typeIcon = "🍰";
+                idealTemp = "175°C (350°F)"; idealTime = "25-35 mins";
+                procedure = "Cream fats and sugar until light and fluffy. Slowly add room temperature eggs. Alternate folding in sifted dry ingredients and liquids. Do not overmix. Bake until a skewer comes out clean.";
+            } 
+            else if (target.includes("brioche") || target.includes("babka") || target.includes("challah") || target.includes("milk") || fatPct > 15 || sugarPct > 10) {
+                detectedType = "Enriched Dough (Brioche style)"; typeIcon = "🍞";
+                idealTemp = "180°C (350°F)"; idealTime = "25-35 mins";
+                procedure = "Knead flour, liquids, eggs, and yeast until strong gluten forms. Slowly incorporate cold butter cubes until fully absorbed and passes windowpane test. Proof cold overnight for best flavor and handling.";
             }
 
             outputBox.style.display = 'block';
             let html = `
                 <div class="insight-block" style="background:#f9f5f0; padding:15px; border-radius:8px;">
-                    <h3 style="margin-bottom: 8px; color: var(--primary); font-family: 'Playfair Display', serif;">Target: ${detectedType}</h3>
+                    <h3 style="margin-bottom: 8px; color: var(--primary); font-family: 'Playfair Display', serif;">${typeIcon} Target: ${detectedType}</h3>
                     <strong>🧬 Working Hydration: ${hydration.toFixed(1)}%</strong>
                     <br><span style="font-size: 0.85rem; color:#666;">(Calculated including liquids from milk and eggs)</span>
                 </div>
                 <div class="sencal-section-title" style="margin-top:15px;">Diagnostic Adjustments</div>
             `;
 
-            // Smart Diagnosis & Fixes
+            // Universal Smart Diagnosis & Fixes
             let issuesFound = 0;
 
             if (detectedType.includes("Chimney")) {
                 if (hydration > 60) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Dough Too Wet.</div><p class="solution"><strong>💡 Fix:</strong> Chimney cake dough must be stiff enough to hold onto the spit. Reduce liquid to reach ~50-55% hydration.</p></div>`; }
-                if (sugarPct > 20) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Too much sugar inside dough.</div><p class="solution"><strong>💡 Fix:</strong> Keep internal sugar around 10-15%. Save the rest of the sugar for rolling the outside!</p></div>`; }
+                if (sugarPct > 20) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Too much internal sugar.</div><p class="solution"><strong>💡 Fix:</strong> Keep internal sugar around 10-15%. Save the rest for rolling the outside!</p></div>`; }
             } 
-            else if (detectedType.includes("Cookie")) {
-                if (sugarPct < 50) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar.</div><p class="solution"><strong>💡 Fix:</strong> Traditional cookies need 80-100% sugar to flour ratio for proper spread and chewiness. Increase sugar.</p></div>`; }
-                if (fatPct < 40) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Fat.</div><p class="solution"><strong>💡 Fix:</strong> Cookies rely on fat for tenderness. Consider increasing butter.</p></div>`; }
+            else if (detectedType.includes("Laminated")) {
+                if (fatPct < 40) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Fat too low for lamination.</div><p class="solution"><strong>💡 Fix:</strong> Croissants require a heavy butter block (beurrage), typically 50-60% of flour weight to create flaky layers.</p></div>`; }
+                if (hydration > 60) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Détrempe too wet.</div><p class="solution"><strong>💡 Fix:</strong> The base dough must be stiff enough to match the consistency of cold butter. Reduce hydration to ~50-55%.</p></div>`; }
             }
-            else if (detectedType.includes("Cake")) {
-                if (hydration < 60) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Batter is too dry.</div><p class="solution"><strong>💡 Fix:</strong> Add more liquid milk to ensure a tender, moist crumb.</p></div>`; }
+            else if (detectedType.includes("Tart")) {
+                if (hydration > 25) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Too much liquid.</div><p class="solution"><strong>💡 Fix:</strong> Excess liquid activates gluten, making crusts tough and causing them to shrink in the pan. Use just enough ice water/egg to bind.</p></div>`; }
+                if (fatPct < 40) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Fat too low.</div><p class="solution"><strong>💡 Fix:</strong> Shortcrust relies on fat (50-60% typically) to coat flour proteins and prevent gluten formation. Increase butter.</p></div>`; }
+            }
+            else if (detectedType.includes("Choux")) {
+                if (hydration < 100) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Hydration too low.</div><p class="solution"><strong>💡 Fix:</strong> Choux pastry requires massive hydration (125-150% including eggs) because it relies entirely on steam to puff up. Add more liquid/eggs.</p></div>`; }
+            }
+            else if (detectedType.includes("Cookie")) {
+                if (sugarPct < 50) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar.</div><p class="solution"><strong>💡 Fix:</strong> Traditional cookies need 80-100% sugar-to-flour ratio for proper spread, caramelization, and chewiness.</p></div>`; }
+                if (fatPct < 40) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Fat.</div><p class="solution"><strong>💡 Fix:</strong> Cookies rely on fat for tenderness. Consider increasing butter to 60-80%.</p></div>`; }
+            }
+            else if (detectedType.includes("Cake") || detectedType.includes("Muffin")) {
+                if (hydration < 60) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Batter is too dry.</div><p class="solution"><strong>💡 Fix:</strong> Add more liquid (milk/buttermilk) to ensure a tender, moist crumb.</p></div>`; }
+                if (sugarPct < 40 && !target.includes("muffin")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar for Cake.</div><p class="solution"><strong>💡 Fix:</strong> The texture will be more similar to bread or a scone. Cakes usually require 80-100% sugar.</p></div>`; }
             }
             else { 
-                // Bread Logic
-                if (hydration >= 78) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">💧 Very High Hydration.</div><p class="solution"><strong>💡 Fix:</strong> Proceed with caution. Build strength using stretch-and-folds. Do not add extra flour while kneading.</p></div>`; }
+                // Bread Logic (Lean & Enriched)
+                if (hydration >= 78) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">💧 Very High Hydration.</div><p class="solution"><strong>💡 Fix:</strong> Proceed with caution. Build strength using stretch-and-folds or coil folds. Do not add extra raw flour while kneading.</p></div>`; }
                 if (salt > 0 && (saltPct < 1.5 || saltPct > 2.5)) { 
                     issuesFound++; 
                     const idealSalt = (trueFlour * 0.02).toFixed(1);
-                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Incorrect Salt Ratio.</div><p class="solution"><strong>💡 Fix:</strong> Salt regulates yeast. Change salt to exactly ${idealSalt}g (2% of flour).</p></div>`; 
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Incorrect Salt Ratio.</div><p class="solution"><strong>💡 Fix:</strong> Salt regulates yeast and strengthens gluten. Change salt to exactly ${idealSalt}g (2% of flour).</p></div>`; 
                 }
+                if (fatPct >= 15 && detectedType === "Standard Lean Bread") { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🧈 High Fat for Lean Dough.</div><p class="solution"><strong>💡 Fix:</strong> Fat coats gluten. Knead flour and liquids to build strength first, then fold in butter last.</p></div>`; }
+            }
+
+            // Universal Yeast Warning
+            if (yeastPct > 3 && yeast > 0 && !target.includes("cookie") && !target.includes("tart")) { 
+                issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🚀 High Yeast Activity.</div><p class="solution"><strong>💡 Fix:</strong> Fast proofing expected! Watch closely or dough will over-ferment and collapse in the oven.</p></div>`; 
             }
 
             if (issuesFound === 0) {
-                html += `<div class="insight-block"><div class="diagnosis" style="color:var(--success);">✅ Ratios Look Great!</div><p class="solution">Your measurements are perfectly balanced for this type of bake.</p></div>`;
+                html += `<div class="insight-block"><div class="diagnosis" style="color:var(--success);">✅ Ratios Look Great!</div><p class="solution">Your measurements are perfectly mathematically balanced for this type of bake.</p></div>`;
             }
 
             // Specs Box
