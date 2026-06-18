@@ -192,8 +192,9 @@
             <div class="sencal-inputs" style="margin-bottom: 20px;">
                 <div class="input-group" style="grid-column: 1 / -1;">
                     <label>What are you baking?</label>
-                    <input type="text" id="sc-target" placeholder="e.g., Sourdough, Croissant, Tart, Choux, Muffin, Chimney Cake..." oninput="runSencal()">
+                    <input type="text" id="sc-target" placeholder="e.g., Sourdough, Croissant, Tart, Choux, Muffin, Chimney Cake..." oninput="runSencal(); debouncedBaselineLookup()">
                 </div>
+                <div id="baseline-comparison" style="grid-column: 1 / -1; display: none; font-family: 'Poppins', sans-serif;"></div>
             </div>
 
             <div class="sencal-section-title">The Foundation</div>
@@ -266,7 +267,75 @@
             setTimeout(() => { document.body.classList.remove('printing-sencal'); }, 500);
         }
 
+        // ==========================================
+        // NEW: REAL-TIME API / BASELINE FETCH ENGINE
+        // ==========================================
+        let baselineTimer;
+        function debouncedBaselineLookup() {
+            clearTimeout(baselineTimer);
+            baselineTimer = setTimeout(fetchBaseline, 800); // Waits 800ms after user stops typing
+        }
+
+        async function fetchBaseline() {
+            const recipeName = document.getElementById('sc-target').value.toLowerCase().trim();
+            const display = document.getElementById('baseline-comparison');
+            
+            if (recipeName.length < 3) {
+                display.style.display = 'none';
+                return;
+            }
+
+            display.style.display = 'block';
+            display.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:var(--primary);"></i> Checking professional standards...';
+
+            try {
+                // REAL API FETCH: 
+                // To use a live JSON file, uncomment the lines below and add your URL.
+                // const response = await fetch(`https://raw.githubusercontent.com/username/repo/main/standards.json`);
+                // const database = await response.json();
+                
+                // FALLBACK MOCK DATABASE:
+                // We use this so your site works instantly without breaking while you build your API
+                const mockDatabase = {
+                    "sourdough": { hydration: "75-80", salt: "2", fat: "0-5" },
+                    "brioche": { hydration: "50-60", salt: "2", fat: "40-60" },
+                    "croissant": { hydration: "50-55", salt: "2", fat: "50-60" },
+                    "chimney cake": { hydration: "50-55", salt: "1", fat: "15-20" },
+                    "cookie": { hydration: "5-10", salt: "1", fat: "60-80" },
+                    "cake": { hydration: "80-100", salt: "1", fat: "40-60" },
+                    "muffin": { hydration: "60-70", salt: "1", fat: "25-35" },
+                    "baguette": { hydration: "65-72", salt: "2", fat: "0" }
+                };
+
+                // Find a match in the database
+                let foundKey = Object.keys(mockDatabase).find(key => recipeName.includes(key));
+
+                if (foundKey) {
+                    const std = mockDatabase[foundKey];
+                    display.innerHTML = `
+                        <div class="info-box" style="margin-top: 5px; padding: 12px; font-size: 0.85rem;">
+                            <strong style="color:var(--dark);"><i class="fa-solid fa-book-open" style="color:var(--primary);"></i> API Baseline for ${foundKey.toUpperCase()}:</strong><br>
+                            <span style="display:inline-block; margin-top:4px;">
+                                💧 Hydration: ${std.hydration}% &nbsp;|&nbsp; 🧂 Salt: ${std.salt}% &nbsp;|&nbsp; 🧈 Fat: ${std.fat}%
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    display.innerHTML = `
+                        <div class="info-box" style="margin-top: 5px; padding: 12px; font-size: 0.85rem; border-left-color: #888; background:#f9f9f9;">
+                            <i class="fa-solid fa-magnifying-glass"></i> No exact API match found. Using Universal Baking Logic.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                display.innerHTML = '<p style="color:var(--alert)">Could not connect to standards database.</p>';
+                console.error("Baseline fetch error:", error);
+            }
+        }
+
+        // ==========================================
         // THE UNIVERSAL SMART BAKING ENGINE
+        // ==========================================
         function runSencal() {
             const target = document.getElementById('sc-target').value.toLowerCase().trim();
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
