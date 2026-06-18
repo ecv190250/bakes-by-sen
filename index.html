@@ -164,18 +164,6 @@
         }
 
         /* ------------------------------------- */
-        /* PRINT STYLING MAGIC                   */
-        /* ------------------------------------- */
-        @media print {
-            body { background: white; color: black; }
-            body.printing-card > *:not(main) { display: none !important; }
-            body.printing-card main > *:not(#posts-container) { display: none !important; }
-            body.printing-card #posts-container > .bake-card:not(.print-active) { display: none !important; }
-            .bake-card.print-active { box-shadow: none; border: none; margin: 0; padding: 0; page-break-inside: avoid; }
-            .no-print { display: none !important; }
-        }
-
-        /* ------------------------------------- */
         /* BAKES BY SEN: SENCAL DIAGNOSTIC CSS   */
         /* ------------------------------------- */
         .sencal-container {
@@ -185,10 +173,10 @@
             border-radius: 12px;
             padding: 35px;
             max-width: 750px;
-            margin: 0 auto 40px auto; /* adjusted margin for top of main */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* slightly increased shadow to pop */
+            margin: 0 auto 40px auto; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             color: #2c2c2c;
-            display: none; /* hidden by default, toggled via top bar button */
+            display: none; 
             animation: elegantFadeUp 0.5s ease-out forwards;
         }
         .sencal-header { text-align: center; margin-bottom: 30px; }
@@ -207,6 +195,25 @@
         .diagnosis { font-weight: 600; margin-bottom: 5px; }
         .solution { color: #047857; margin-top: 0; }
         .alert-diagnosis { color: #c2410c; }
+
+        /* ------------------------------------- */
+        /* ISOLATED PRINT STYLING MAGIC          */
+        /* ------------------------------------- */
+        @media print {
+            body { background: white; color: black; }
+            .no-print { display: none !important; }
+            
+            /* Logic for printing standard recipe cards */
+            body.printing-card > *:not(main) { display: none !important; }
+            body.printing-card main > *:not(#posts-container) { display: none !important; }
+            body.printing-card #posts-container > .bake-card:not(.print-active) { display: none !important; }
+            .bake-card.print-active { box-shadow: none; border: none; margin: 0; padding: 0; page-break-inside: avoid; }
+            
+            /* NEW: Logic for printing ONLY the Sencal tool */
+            body.printing-sencal > *:not(main) { display: none !important; }
+            body.printing-sencal main > *:not(#sencal-app) { display: none !important; }
+            body.printing-sencal #sencal-app { box-shadow: none; border: none; margin: 0; padding: 0; display: block !important; }
+        }
     </style>
 </head>
 <body>
@@ -256,7 +263,7 @@
         <div class="sencal-container" id="sencal-app">
             <div class="sencal-header">
                 <h2>Sencal</h2>
-                <p>The Dough Diagnoser. Enter your recipe in grams.</p>
+                <p>The Advanced Dough & Batter Diagnoser.</p>
             </div>
             
             <div class="sencal-section-title">The Foundation</div>
@@ -282,7 +289,9 @@
 
             <div class="sencal-results" id="sencal-output"></div>
             
-            <button class="no-print" onclick="window.print()" style="margin-top:20px; width:100%; padding:12px; background:#d97706; color:white; border:none; border-radius:6px; cursor:pointer;">Print Fixed Recipe</button>
+            <button class="no-print" onclick="printSencal()" style="margin-top:20px; width:100%; padding:12px; background:#d97706; color:white; border:none; border-radius:6px; cursor:pointer; font-family:'Poppins', sans-serif; font-size: 1rem;">
+                <i class="fa-solid fa-print"></i> Print Diagnostic Report
+            </button>
         </div>
 
         <div id="loading" class="loading-state">
@@ -308,23 +317,33 @@
         closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
         overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
 
-        // Sencal Toggle & Logic
+        // Sencal Toggle
         function toggleSencal() {
             const app = document.getElementById('sencal-app');
             if (app.style.display === 'none' || app.style.display === '') {
                 app.style.display = 'block';
-                // Scroll down slightly so it's perfectly in view
-                app.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                app.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 app.style.display = 'none';
             }
         }
 
+        // NEW: Isolated Sencal Print Function
+        function printSencal() {
+            document.body.classList.add('printing-sencal');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('printing-sencal');
+            }, 500);
+        }
+
+        // THE UPGRADED "SMART" SENCAL LOGIC
         function runSencal() {
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
             const water = parseFloat(document.getElementById('sc-water').value) || 0;
             const milk = parseFloat(document.getElementById('sc-milk').value) || 0;
             const salt = parseFloat(document.getElementById('sc-salt').value) || 0;
+            const yeast = parseFloat(document.getElementById('sc-yeast').value) || 0;
             const starter = parseFloat(document.getElementById('sc-starter').value) || 0;
             const butter = parseFloat(document.getElementById('sc-butter').value) || 0;
             const sugar = parseFloat(document.getElementById('sc-sugar').value) || 0;
@@ -339,19 +358,57 @@
             const fatPct = (butter / trueFlour) * 100;
             const sugarPct = (sugar / trueFlour) * 100;
             const saltPct = (salt / trueFlour) * 100;
+            const yeastPct = (yeast / trueFlour) * 100;
+
+            // SMART DETECTION ENGINE
+            let doughType = "Standard Lean Dough";
+            let typeIcon = "🥖";
+
+            if (hydration < 55 && fatPct >= 20 && sugarPct >= 20) {
+                doughType = "Cookie Dough";
+                typeIcon = "🍪";
+            } else if (hydration >= 65 && sugarPct >= 40 && fatPct >= 20) {
+                doughType = "Cake Batter";
+                typeIcon = "🍰";
+            } else if (fatPct >= 12 || sugarPct >= 10) {
+                doughType = "Enriched Dough (Brioche/Sweet)";
+                typeIcon = "🥐";
+            }
 
             outputBox.style.display = 'block';
-            let html = `<div class="insight-block"><strong>🧬 True Hydration: ${hydration.toFixed(1)}%</strong><p>Factored in hidden liquids from starter, milk, and eggs.</p></div>`;
+            let html = `
+                <div class="insight-block" style="background:#f9f5f0; padding:15px; border-radius:8px;">
+                    <h3 style="margin-bottom: 8px; color: var(--primary); font-family: 'Playfair Display', serif;">${typeIcon} Detected: ${doughType}</h3>
+                    <strong>🧬 Overall Hydration: ${hydration.toFixed(1)}%</strong>
+                    <p style="font-size: 0.85rem; margin-top:5px;">Calculated using hidden liquids from starter, milk, and eggs.</p>
+                </div>
+            `;
 
-            if (hydration >= 78) html += `<div class="insight-block"><div class="diagnosis">💧 Extremely High Hydration.</div><p class="solution"><strong>💡 Solution:</strong> Use wet hands for 'coil folds'. Bake in a pre-heated Dutch oven.</p></div>`;
-            if (salt > 0 && (saltPct < 1.5 || saltPct > 2.5)) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Incorrect Salt Ratio.</div><p class="solution"><strong>💡 Solution:</strong> Adjust to 2% of flour weight.</p></div>`;
-            if (fatPct >= 15) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🧈 High Fat Content.</div><p class="solution"><strong>💡 Solution:</strong> Knead flour/liquids first, then fold in butter last.</p></div>`;
-            if (sugarPct > 10) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🍬 High Sugar Content.</div><p class="solution"><strong>💡 Solution:</strong> Reduce oven temp by 25°F; expect longer rise.</p></div>`;
+            // CONTEXTUAL ADVICE BASED ON DETECTED TYPE
+            if (doughType === "Cookie Dough") {
+                if (sugarPct > 100) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Extreme Sugar.</div><p class="solution"><strong>💡 Solution:</strong> Cookies will spread very thin. Chill dough for 2-24h before baking.</p></div>`;
+                if (fatPct > 80) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Very High Fat.</div><p class="solution"><strong>💡 Solution:</strong> Edges might turn greasy. Consider reducing butter slightly or adding 10% more flour.</p></div>`;
+            } 
+            else if (doughType === "Cake Batter") {
+                if (hydration < 60) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Dense Batter.</div><p class="solution"><strong>💡 Solution:</strong> Cake might turn out dry. Consider adding a splash of milk or extra egg.</p></div>`;
+                if (sugarPct < 40) html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar for Cake.</div><p class="solution"><strong>💡 Solution:</strong> Texture will be more similar to a muffin or scone. Don't overmix!</p></div>`;
+            } 
+            else { // Bread Logic (Lean or Enriched)
+                if (hydration >= 78) html += `<div class="insight-block"><div class="diagnosis">💧 Extremely High Hydration.</div><p class="solution"><strong>💡 Solution:</strong> Dough will be very sticky. Use wet hands for 'coil folds' and bake in a pre-heated Dutch oven.</p></div>`;
+                if (salt > 0 && (saltPct < 1.5 || saltPct > 2.5)) {
+                    const idealSalt = (trueFlour * 0.02).toFixed(1);
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Incorrect Salt Ratio.</div><p class="solution"><strong>💡 Solution:</strong> Salt controls yeast. Adjust your salt to exactly ${idealSalt}g (2% of total flour).</p></div>`;
+                }
+                if (fatPct >= 15 && doughType !== "Enriched Dough (Brioche/Sweet)") html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🧈 High Fat Content.</div><p class="solution"><strong>💡 Solution:</strong> Fat coats gluten. Knead flour and liquids to build strength first, then fold in butter last.</p></div>`;
+            }
+
+            // Universal Yeast Warning
+            if (yeastPct > 3 && yeast > 0) html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🚀 High Yeast Activity.</div><p class="solution"><strong>💡 Solution:</strong> Fast proofing expected! Watch closely or dough will over-ferment and collapse.</p></div>`;
 
             outputBox.innerHTML = html;
         }
 
-        // Print Recipe Logic
+        // Print Recipe Logic (For standard blog posts)
         window.printRecipe = function(btnElement) {
             const card = btnElement.closest('.bake-card');
             document.body.classList.add('printing-card');
