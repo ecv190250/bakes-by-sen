@@ -197,8 +197,12 @@
                 <div id="baseline-comparison" style="grid-column: 1 / -1; display: none; font-family: 'Poppins', sans-serif;"></div>
             </div>
 
-            <div class="sencal-section-title">The Foundation</div>
+            <div class="sencal-section-title">The Foundation & Scaling</div>
             <div class="sencal-inputs">
+                <div class="input-group" style="border: 1px dashed var(--primary); padding: 8px; border-radius: 6px;">
+                    <label style="color: var(--primary); font-weight: 600;">🎯 Scale Target Flour (g)</label>
+                    <input type="number" id="sc-scale-target" placeholder="e.g. 2500 for big batch" oninput="runSencal()" style="background: #fffdfa;">
+                </div>
                 <div class="input-group"><label>Flour (g)</label><input type="number" id="sc-flour" placeholder="e.g. 500" oninput="runSencal()"></div>
                 <div class="input-group"><label>Water (g)</label><input type="number" id="sc-water" placeholder="e.g. 300" oninput="runSencal()"></div>
                 <div class="input-group"><label>Liquid Milk (g)</label><input type="number" id="sc-milk-liquid" placeholder="e.g. 50" oninput="runSencal()"></div>
@@ -292,11 +296,9 @@
             display.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:var(--primary);"></i> Checking professional standards...';
 
             try {
-                // REAL API FETCH: Connects directly to your standards.json file
                 const response = await fetch('standards.json');
                 const database = await response.json();
 
-                // Find a match in the database
                 let foundKey = Object.keys(database).find(key => recipeName.includes(key));
 
                 if (foundKey) {
@@ -323,11 +325,13 @@
         }
 
         // ==========================================
-        // THE UNIVERSAL SMART BAKING ENGINE
+        // THE UNIVERSAL SMART BAKING ENGINE WITH SCALING
         // ==========================================
         function runSencal() {
             const target = document.getElementById('sc-target').value.toLowerCase().trim();
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
+            const scaleTarget = parseFloat(document.getElementById('sc-scale-target').value) || 0;
+            
             const water = parseFloat(document.getElementById('sc-water').value) || 0;
             const milkLiq = parseFloat(document.getElementById('sc-milk-liquid').value) || 0;
             const milkPow = parseFloat(document.getElementById('sc-milk-powder').value) || 0;
@@ -335,7 +339,6 @@
             const yeast = parseFloat(document.getElementById('sc-yeast').value) || 0;
             const starter = parseFloat(document.getElementById('sc-starter').value) || 0;
             
-            // NEW VARIABLES ADDED HERE
             const bakingPowder = parseFloat(document.getElementById('sc-baking-powder').value) || 0;
             const bakingSoda = parseFloat(document.getElementById('sc-baking-soda').value) || 0;
             const acid = parseFloat(document.getElementById('sc-acid').value) || 0;
@@ -349,7 +352,6 @@
 
             // Universal Math Engine
             const trueFlour = flour + (starter * 0.5);
-            // Liquid milk is ~87% water. Eggs are ~75% water. Acid (like buttermilk) is roughly 90% water. Milk powder adds solids, not hydration.
             const trueWater = water + (starter * 0.5) + (milkLiq * 0.87) + (eggs * 0.75) + (acid * 0.9); 
             
             const hydration = (trueWater / trueFlour) * 100;
@@ -358,7 +360,6 @@
             const saltPct = (salt / trueFlour) * 100;
             const yeastPct = (yeast / trueFlour) * 100;
             
-            // NEW PERCENTAGE CALCULATIONS ADDED HERE
             const bpPct = (bakingPowder / trueFlour) * 100;
             const bsPct = (bakingSoda / trueFlour) * 100;
 
@@ -417,8 +418,41 @@
                     <strong>🧬 Working Hydration: ${hydration.toFixed(1)}%</strong>
                     <br><span style="font-size: 0.85rem; color:#666;">(Calculated including liquids from milk and eggs)</span>
                 </div>
-                <div class="sencal-section-title" style="margin-top:15px;">Diagnostic Adjustments</div>
             `;
+
+            // INJECTED PRODUCTION SCALING ELEMENT
+            if (scaleTarget > 0) {
+                const factor = scaleTarget / flour;
+                const baseTotal = flour + water + milkLiq + milkPow + salt + yeast + starter + bakingPowder + bakingSoda + acid + butter + sugar + eggs;
+                
+                html += `
+                    <div class="sencal-section-title" style="margin-top:20px; color:var(--primary); border-bottom-color:var(--primary);">⚖️ Scaled Production Sheet (Factor: ${factor.toFixed(2)}x)</div>
+                    <div style="background: #fff; border: 1px solid var(--primary); border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.95rem; line-height: 1.6;">
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:6px;">
+                            <span>Ingredient</span><span>Scaled Mass</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;"><span>🌾 Raw Flour:</span><strong>${scaleTarget.toFixed(0)}g</strong></div>
+                        ${water > 0 ? `<div style="display:flex; justify-content:space-between;"><span>💧 Water:</span><strong>${(water * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${starter > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧪 Sourdough Starter:</span><strong>${(starter * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${milkLiq > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🥛 Liquid Milk:</span><strong>${(milkLiq * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${milkPow > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍼 Milk Powder:</span><strong>${(milkPow * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${salt > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧂 Salt:</span><strong>${(salt * factor).toFixed(1)}g</strong></div>` : ''}
+                        ${yeast > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🚀 Yeast:</span><strong>${(yeast * factor).toFixed(1)}g</strong></div>` : ''}
+                        ${bakingPowder > 0 ? `<div style="display:flex; justify-content:space-between;"><span>✨ Baking Powder:</span><strong>${(bakingPowder * factor).toFixed(1)}g</strong></div>` : ''}
+                        ${bakingSoda > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧼 Baking Soda:</span><strong>${(bakingSoda * factor).toFixed(1)}g</strong></div>` : ''}
+                        ${acid > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍋 Acidic Liquid/Cocoa:</span><strong>${(acid * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${butter > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧈 Butter/Oil:</span><strong>${(butter * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${sugar > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍬 Sugar:</span><strong>${(sugar * factor).toFixed(0)}g</strong></div>` : ''}
+                        ${eggs > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🥚 Eggs:</span><strong>${(eggs * factor).toFixed(0)}g</strong></div>` : ''}
+                        <div style="display:flex; justify-content:space-between; border-top:1px dashed #ccc; margin-top:6px; padding-top:6px; font-weight:bold; color:var(--primary);">
+                            <span>📊 Est. Batch Yield:</span>
+                            <span>${(baseTotal * factor).toFixed(0)}g</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `<div class="sencal-section-title" style="margin-top:15px;">Diagnostic Adjustments</div>`;
 
             // Universal Smart Diagnosis & Fixes
             let issuesFound = 0;
@@ -438,44 +472,30 @@
             else if (detectedType.includes("Choux")) {
                 if (hydration < 100) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Hydration too low.</div><p class="solution"><strong>💡 Fix:</strong> Choux pastry requires massive hydration (125-150% including eggs) because it relies entirely on steam to puff up. Add more liquid/eggs.</p></div>`; }
             }
-            
-            // NEW PASTRY CHEF LOGIC ADDED HERE
             else if (detectedType.includes("Cookie") || detectedType.includes("Cake") || detectedType.includes("Quick Bread / Muffin")) {
-                
                 if (sugarPct < 40 && detectedType.includes("Cake") && !target.includes("muffin")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar for Cake.</div><p class="solution"><strong>💡 Fix:</strong> The texture will be more similar to bread or a scone. Cakes usually require 80-100% sugar.</p></div>`; }
-                
                 if (sugarPct < 50 && detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar.</div><p class="solution"><strong>💡 Fix:</strong> Traditional cookies need 80-100% sugar-to-flour ratio for proper spread, caramelization, and chewiness.</p></div>`; }
-                
                 if (fatPct < 40 && detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Fat.</div><p class="solution"><strong>💡 Fix:</strong> Cookies rely on fat for tenderness. Consider increasing butter to 60-80%.</p></div>`; }
-
                 if (hydration < 60 && !detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Batter is too dry.</div><p class="solution"><strong>💡 Fix:</strong> Add more liquid (milk/buttermilk) to ensure a tender, moist crumb.</p></div>`; }
 
-                // 1. Missing Leavener Check
                 if (yeast === 0 && starter === 0 && bakingPowder === 0 && bakingSoda === 0) { 
                     issuesFound++; 
                     html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ No Leavening Agent.</div><p class="solution"><strong>💡 Fix:</strong> This batter will bake flat and dense. Add baking powder (typically 2-4%) or baking soda (0.5-1% with an acid).</p></div>`; 
                 }
-                
-                // 2. Baking Powder Overdose Check
                 if (bpPct > 5) { 
                     issuesFound++; 
                     html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Excessive Baking Powder.</div><p class="solution"><strong>💡 Fix:</strong> Anything over 5% can cause the batter to rapidly over-expand and then collapse in the oven, leaving a metallic taste. Reduce to 2-4%.</p></div>`; 
                 }
-
-                // 3. Baking Soda Overdose Check
                 if (bsPct > 1.5) { 
                     issuesFound++; 
                     html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Excessive Baking Soda.</div><p class="solution"><strong>💡 Fix:</strong> Baking soda is highly alkaline. Over 1.5% will leave a harsh, soapy flavor. Reduce to 0.5-1%.</p></div>`; 
                 }
-
-                // 4. Baking Soda without Acid Check
                 if (bakingSoda > 0 && acid === 0) {
                     issuesFound++;
                     html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Baking Soda needs an Acid.</div><p class="solution"><strong>💡 Fix:</strong> Baking soda requires an acidic ingredient (buttermilk, yogurt, natural cocoa, lemon juice) to activate and neutralize its soapy flavor. Add an acid, or switch to Baking Powder.</p></div>`;
                 }
             }
             else { 
-                // Bread Logic (Lean & Enriched)
                 if (hydration >= 78) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">💧 Very High Hydration.</div><p class="solution"><strong>💡 Fix:</strong> Proceed with caution. Build strength using stretch-and-folds or coil folds. Do not add extra raw flour while kneading.</p></div>`; }
                 if (salt > 0 && (saltPct < 1.5 || saltPct > 2.5)) { 
                     issuesFound++; 
@@ -485,7 +505,6 @@
                 if (fatPct >= 15 && detectedType === "Standard Lean Bread") { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🧈 High Fat for Lean Dough.</div><p class="solution"><strong>💡 Fix:</strong> Fat coats gluten. Knead flour and liquids to build strength first, then fold in butter last.</p></div>`; }
             }
 
-            // Universal Yeast Warning
             if (yeastPct > 3 && yeast > 0 && !target.includes("cookie") && !target.includes("tart")) { 
                 issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">🚀 High Yeast Activity.</div><p class="solution"><strong>💡 Fix:</strong> Fast proofing expected! Watch closely or dough will over-ferment and collapse in the oven.</p></div>`; 
             }
@@ -625,7 +644,7 @@
                 matches.forEach(match => {
                     const item = document.createElement('div');
                     item.className = 'suggestion-item';
-                    item.innerHTML = `${match.img ? `<img src="${match.img}" class="suggestion-img" loading="lazy" onerror="this.style.display='none'">` : `<div style="width:35px; height:35px; background:#f0f0f0; border-radius:6px;"></div>`}<span class="suggestion-title">${match.title}</span>`;
+                    item.innerHTML = `${match.img ? `<img src="${match.img}" class="suggestion-img" loading="lazy" onerror="this.style.display='none'\">` : `<div style=\"width:35px; height:35px; background:#f0f0f0; border-radius:6px;\"></div>`}<span class=\"suggestion-title\">${match.title}</span>`;
                     item.onclick = () => { searchBar.value = match.title; suggestionsBox.style.display = 'none'; filterDisplayedRecipes(match.title.toLowerCase()); };
                     suggestionsBox.appendChild(item);
                 });
