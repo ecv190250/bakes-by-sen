@@ -172,8 +172,8 @@
             <i class="fa-solid fa-xmark"></i>
         </div>
         <h2>About the Baker</h2>
-        <p style="margin-top: 1rem;">Hi, I'm Erick. For me, baking is so much more than just following a recipe—it's a way of sharing a piece of my heart. Over the last decade, I've worked in professional kitchens from the Philippines to Saudi Arabia, learning that while technique is vital, it's the genuine passion you put into every batch that makes the difference.</p>
-        <p style="margin-top: 1rem;">My path has taken me from hands-on creation to leading production teams, and my background in technical operations has taught me to value precision and consistency in everything I make. Baking is my way of connecting with others.</p>
+        <p style="margin-top: 1rem;">Hi, I'm Erick. For me, baking is more than just a recipe—it's about precision, consistency, and sharing a piece of my heart. Over the last decade, my journey through professional kitchens has taken me from hands-on production to leading baking teams.</p>
+        <p style="margin-top: 1rem;">Every recipe in this journal blends technical care with true passion, crafted from scratch to bring people together.</p>
         <a href="mailto:erickvillabroza.ev@gmail.com" style="display:block; margin-top: 1.5rem; color: var(--dark); text-decoration: none;">
             <i class="fa-solid fa-envelope" style="color: var(--primary);"></i> erickvillabroza.ev@gmail.com
         </a>
@@ -199,7 +199,7 @@
 
             <div class="sencal-section-title">The Foundation & Scaling</div>
             <div class="sencal-inputs">
-                <div class="input-group" style="border: 1px dashed var(--primary); padding: 8px; border-radius: 6px;">
+                <div class="input-group" style="grid-column: 1 / -1; border: 1px dashed var(--primary); padding: 8px; border-radius: 6px;">
                     <label style="color: var(--primary); font-weight: 600;">🎯 Scale Target Flour (g)</label>
                     <input type="number" id="sc-scale-target" placeholder="e.g. 2500 for big batch" oninput="runSencal()" style="background: #fffdfa;">
                 </div>
@@ -296,9 +296,11 @@
             display.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:var(--primary);"></i> Checking professional standards...';
 
             try {
+                // REAL API FETCH: Connects directly to your standards.json file
                 const response = await fetch('standards.json');
                 const database = await response.json();
 
+                // Find a match in the database
                 let foundKey = Object.keys(database).find(key => recipeName.includes(key));
 
                 if (foundKey) {
@@ -325,13 +327,11 @@
         }
 
         // ==========================================
-        // THE UNIVERSAL SMART BAKING ENGINE WITH SCALING
+        // THE UNIVERSAL SMART BAKING ENGINE
         // ==========================================
         function runSencal() {
             const target = document.getElementById('sc-target').value.toLowerCase().trim();
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
-            const scaleTarget = parseFloat(document.getElementById('sc-scale-target').value) || 0;
-            
             const water = parseFloat(document.getElementById('sc-water').value) || 0;
             const milkLiq = parseFloat(document.getElementById('sc-milk-liquid').value) || 0;
             const milkPow = parseFloat(document.getElementById('sc-milk-powder').value) || 0;
@@ -347,11 +347,15 @@
             const sugar = parseFloat(document.getElementById('sc-sugar').value) || 0;
             const eggs = parseFloat(document.getElementById('sc-eggs').value) || 0;
             
+            // Scaling target check
+            const scaleTarget = parseFloat(document.getElementById('sc-scale-target').value) || 0;
+            
             const outputBox = document.getElementById('sencal-output');
             if (flour <= 0) { outputBox.style.display = 'none'; return; }
 
             // Universal Math Engine
             const trueFlour = flour + (starter * 0.5);
+            // Liquid milk is ~87% water. Eggs are ~75% water. Acid (like buttermilk) is roughly 90% water.
             const trueWater = water + (starter * 0.5) + (milkLiq * 0.87) + (eggs * 0.75) + (acid * 0.9); 
             
             const hydration = (trueWater / trueFlour) * 100;
@@ -418,41 +422,8 @@
                     <strong>🧬 Working Hydration: ${hydration.toFixed(1)}%</strong>
                     <br><span style="font-size: 0.85rem; color:#666;">(Calculated including liquids from milk and eggs)</span>
                 </div>
+                <div class="sencal-section-title" style="margin-top:15px;">Diagnostic Adjustments</div>
             `;
-
-            // INJECTED PRODUCTION SCALING ELEMENT
-            if (scaleTarget > 0) {
-                const factor = scaleTarget / flour;
-                const baseTotal = flour + water + milkLiq + milkPow + salt + yeast + starter + bakingPowder + bakingSoda + acid + butter + sugar + eggs;
-                
-                html += `
-                    <div class="sencal-section-title" style="margin-top:20px; color:var(--primary); border-bottom-color:var(--primary);">⚖️ Scaled Production Sheet (Factor: ${factor.toFixed(2)}x)</div>
-                    <div style="background: #fff; border: 1px solid var(--primary); border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.95rem; line-height: 1.6;">
-                        <div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:6px;">
-                            <span>Ingredient</span><span>Scaled Mass</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;"><span>🌾 Raw Flour:</span><strong>${scaleTarget.toFixed(0)}g</strong></div>
-                        ${water > 0 ? `<div style="display:flex; justify-content:space-between;"><span>💧 Water:</span><strong>${(water * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${starter > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧪 Sourdough Starter:</span><strong>${(starter * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${milkLiq > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🥛 Liquid Milk:</span><strong>${(milkLiq * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${milkPow > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍼 Milk Powder:</span><strong>${(milkPow * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${salt > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧂 Salt:</span><strong>${(salt * factor).toFixed(1)}g</strong></div>` : ''}
-                        ${yeast > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🚀 Yeast:</span><strong>${(yeast * factor).toFixed(1)}g</strong></div>` : ''}
-                        ${bakingPowder > 0 ? `<div style="display:flex; justify-content:space-between;"><span>✨ Baking Powder:</span><strong>${(bakingPowder * factor).toFixed(1)}g</strong></div>` : ''}
-                        ${bakingSoda > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧼 Baking Soda:</span><strong>${(bakingSoda * factor).toFixed(1)}g</strong></div>` : ''}
-                        ${acid > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍋 Acidic Liquid/Cocoa:</span><strong>${(acid * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${butter > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🧈 Butter/Oil:</span><strong>${(butter * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${sugar > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🍬 Sugar:</span><strong>${(sugar * factor).toFixed(0)}g</strong></div>` : ''}
-                        ${eggs > 0 ? `<div style="display:flex; justify-content:space-between;"><span>🥚 Eggs:</span><strong>${(eggs * factor).toFixed(0)}g</strong></div>` : ''}
-                        <div style="display:flex; justify-content:space-between; border-top:1px dashed #ccc; margin-top:6px; padding-top:6px; font-weight:bold; color:var(--primary);">
-                            <span>📊 Est. Batch Yield:</span>
-                            <span>${(baseTotal * factor).toFixed(0)}g</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            html += `<div class="sencal-section-title" style="margin-top:15px;">Diagnostic Adjustments</div>`;
 
             // Universal Smart Diagnosis & Fixes
             let issuesFound = 0;
@@ -522,6 +493,54 @@
                     <p style="font-size:0.9rem;"><strong>👨‍🍳 Method:</strong> ${procedure}</p>
                 </div>
             `;
+
+            // NEW: Render the Scaled Production Sheet Engine if a target is given
+            if (scaleTarget > 0) {
+                const factor = scaleTarget / flour;
+                const baseTotal = flour + water + milkLiq + milkPow + salt + yeast + starter + bakingPowder + bakingSoda + acid + butter + sugar + eggs;
+                const scaledTotal = baseTotal * factor;
+                
+                let productionSheetHtml = `
+                    <div class="insight-block" style="background: #fff; border: 2px solid var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;"><i class="fa-solid fa-clipboard-list"></i> Scaled Production Sheet (${factor.toFixed(2)}x)</h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #ddd; font-weight: 600;">
+                                    <th style="padding: 6px 0;">Ingredient</th>
+                                    <th style="padding: 6px 0; text-align: right;">Scaled Weight</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                if (flour > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🌾 Flour</td><td style="padding: 6px 0; text-align: right; font-weight:600;">${(flour * factor).toFixed(0)}g</td></tr>`;
+                if (water > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">💧 Water</td><td style="padding: 6px 0; text-align: right;">${(water * factor).toFixed(0)}g</td></tr>`;
+                if (milkLiq > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🥛 Liquid Milk</td><td style="padding: 6px 0; text-align: right;">${(milkLiq * factor).toFixed(0)}g</td></tr>`;
+                if (milkPow > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🍼 Milk Powder</td><td style="padding: 6px 0; text-align: right;">${(milkPow * factor).toFixed(0)}g</td></tr>`;
+                if (butter > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🧈 Butter/Oil</td><td style="padding: 6px 0; text-align: right;">${(butter * factor).toFixed(0)}g</td></tr>`;
+                if (sugar > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🍬 Sugar</td><td style="padding: 6px 0; text-align: right;">${(sugar * factor).toFixed(0)}g</td></tr>`;
+                if (eggs > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🥚 Eggs</td><td style="padding: 6px 0; text-align: right;">${(eggs * factor).toFixed(0)}g</td></tr>`;
+                if (starter > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🏺 Starter</td><td style="padding: 6px 0; text-align: right;">${(starter * factor).toFixed(0)}g</td></tr>`;
+                if (acid > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 6px 0;">🧪 Acidic Liquids/Cocoa</td><td style="padding: 6px 0; text-align: right;">${(acid * factor).toFixed(0)}g</td></tr>`;
+                
+                // Micro ingredients with 1 decimal space precision
+                if (salt > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee; color: #b45309;"><td style="padding: 6px 0;">🧂 Salt</td><td style="padding: 6px 0; text-align: right; font-weight:600;">${(salt * factor).toFixed(1)}g</td></tr>`;
+                if (yeast > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee; color: #b45309;"><td style="padding: 6px 0;">🚀 Yeast</td><td style="padding: 6px 0; text-align: right; font-weight:600;">${(yeast * factor).toFixed(1)}g</td></tr>`;
+                if (bakingPowder > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee; color: #b45309;"><td style="padding: 6px 0;">✨ Baking Powder</td><td style="padding: 6px 0; text-align: right; font-weight:600;">${(bakingPowder * factor).toFixed(1)}g</td></tr>`;
+                if (bakingSoda > 0) productionSheetHtml += `<tr style="border-bottom: 1px solid #eee; color: #b45309;"><td style="padding: 6px 0;">🧼 Baking Soda</td><td style="padding: 6px 0; text-align: right; font-weight:600;">${(bakingSoda * factor).toFixed(1)}g</td></tr>`;
+                
+                productionSheetHtml += `
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 12px; padding-top: 8px; border-top: 2px dashed #ddd; display: flex; justify-content: space-between; font-weight: bold; color: var(--success); font-size: 1rem;">
+                            <span>📊 Est. Batch Yield:</span>
+                            <span>${scaledTotal.toFixed(0)}g (${(scaledTotal/1000).toFixed(2)} kg)</span>
+                        </div>
+                    </div>
+                `;
+                
+                html = productionSheetHtml + html;
+            }
 
             outputBox.innerHTML = html;
         }
@@ -644,7 +663,7 @@
                 matches.forEach(match => {
                     const item = document.createElement('div');
                     item.className = 'suggestion-item';
-                    item.innerHTML = `${match.img ? `<img src="${match.img}" class="suggestion-img" loading="lazy" onerror="this.style.display='none'\">` : `<div style=\"width:35px; height:35px; background:#f0f0f0; border-radius:6px;\"></div>`}<span class=\"suggestion-title\">${match.title}</span>`;
+                    item.innerHTML = `${match.img ? `<img src="${match.img}" class="suggestion-img" loading="lazy" onerror="this.style.display='none'">` : `<div style="width:35px; height:35px; background:#f0f0f0; border-radius:6px;"></div>`}<span class="suggestion-title">${match.title}</span>`;
                     item.onclick = () => { searchBar.value = match.title; suggestionsBox.style.display = 'none'; filterDisplayedRecipes(match.title.toLowerCase()); };
                     suggestionsBox.appendChild(item);
                 });
