@@ -802,28 +802,24 @@
             userDiv.textContent = messageText;
             body.appendChild(userDiv);
             
-            // Clear Input
             input.value = '';
             body.scrollTop = body.scrollHeight;
 
-            // 2. Logic Gate: Check Keywords first (The Fast Lane)
             const lowerInput = messageText.toLowerCase();
             let response = "";
 
-            if (lowerInput.includes('help')) {
-                response = "I am here to help, Chef! You can use the Sencal Diagnoser to test your recipe ratios, or ask me specific baking science questions.";
-            } else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                response = "Hello there! What are we baking from scratch today?";
-            } else if (lowerInput.includes('sourdough')) {
-                response = "For sourdough, standard professional hydration sits around 75-80%. Make sure your starter is lively and passes the float test before mixing!";
-            } else if (lowerInput.includes('croissant') || lowerInput.includes('laminated')) {
-                response = "Lamination requires keeping your butter block (beurrage) cold. Try to keep your room and ingredients below 20°C (68°F) to prevent the layers from melting together.";
+            // STRICT GREETING LOGIC: Only triggers if the message is just a greeting
+            const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
+            
+            if (isGreeting) {
+                response = "Hello there, Chef Erick! What are we baking from scratch today?";
+            } else if (lowerInput.includes('help') && messageText.split(' ').length < 3) {
+                response = "I am here to help! You can ask me about scaling, dough consistency, or any specific baking technique.";
             }
 
-            // 3. If no keyword matched, use the True AI (The Intelligence Layer)
+            // 3. If no greeting was triggered, send to True AI (The Intelligence Layer)
             if (response === "") {
                 try {
-                    // This calls your live Cloudflare Worker
                     const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
                         method: 'POST',
                         body: JSON.stringify({ 
@@ -837,7 +833,7 @@
                     const data = await aiResponse.json();
                     response = data.answer;
                 } catch (error) {
-                    response = "I'm thinking... but my connection to the deep AI core is offline. For now, try asking me about sourdough or lamination!";
+                    response = "I'm having trouble connecting to the ovens. Please check your worker deployment.";
                 }
             }
 
