@@ -785,34 +785,59 @@
             }
         }
 
-        function sendChatMessage() {
+        async function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const body = document.getElementById('chatBody');
             const messageText = input.value.trim();
 
             if (messageText === '') return;
 
-            // Append User Message
+            // 1. Append User Message
             const userDiv = document.createElement('div');
             userDiv.className = 'msg-bubble msg-user';
             userDiv.textContent = messageText;
             body.appendChild(userDiv);
-
-            // Clear Input
             input.value = '';
             body.scrollTop = body.scrollHeight;
 
-            // Mock AI Response (Placeholder until we build the Cloudflare Worker)
-            setTimeout(() => {
-                const botDiv = document.createElement('div');
-                botDiv.className = 'msg-bubble msg-bot';
-                botDiv.innerHTML = `
-                    <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-                    <div>Dough logic received! I'm currently warming up my parsing core. Soon, I will calculate this exact scenario using our live Sencal baseline engine.</div>
-                `;
-                body.appendChild(botDiv);
-                body.scrollTop = body.scrollHeight;
-            }, 1000);
+            // 2. Logic Gate: Check Keywords first (The Fast Lane)
+            const lowerInput = messageText.toLowerCase();
+            let response = "";
+
+            if (lowerInput.includes('help')) {
+                response = "I am here to help, Chef! You can use the Sencal Diagnoser to test your recipe ratios, or ask me specific baking science questions.";
+            } else if (lowerInput.includes('sourdough')) {
+                response = "For sourdough, standard hydration is 75-80%. Is your starter active and doubling in volume?";
+            } 
+            // ... add more keywords here ...
+
+            // 3. If no keyword matched, use the True AI (The Intelligence Layer)
+            if (response === "") {
+                try {
+                    // This calls your future Cloudflare Worker
+                    const aiResponse = await fetch('YOUR_CLOUDFLARE_WORKER_URL', {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            question: messageText,
+                            context: {
+                                target: document.getElementById('sc-target').value,
+                                flour: document.getElementById('sc-flour').value
+                            }
+                        })
+                    });
+                    const data = await aiResponse.json();
+                    response = data.answer;
+                } catch (error) {
+                    response = "I'm thinking... but my connection to the deep AI core is offline. For now, try asking me about sourdough or lamination!";
+                }
+            }
+
+            // 4. Render the Response
+            const botDiv = document.createElement('div');
+            botDiv.className = 'msg-bubble msg-bot';
+            botDiv.innerHTML = `<img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar"><div>${response}</div>`;
+            body.appendChild(botDiv);
+            body.scrollTop = body.scrollHeight;
         }
 
         // Initialize fetch on page load
