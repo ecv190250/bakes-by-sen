@@ -815,7 +815,7 @@
             if (response === "") {
                 try {
                     // This calls your future Cloudflare Worker
-                    const aiResponse = await fetch('YOUR_CLOUDFLARE_WORKER_URL', {
+                    const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
                         method: 'POST',
                         body: JSON.stringify({ 
                             question: messageText,
