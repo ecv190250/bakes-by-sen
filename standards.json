@@ -61,5 +61,6 @@
   "bao": { "hydration": "45-50", "salt": "0.5", "fat": "2-5" },
   "mantou": { "hydration": "45-50", "salt": "0.5", "fat": "2-5" },
   "banh mi": { "hydration": "65-70", "salt": "2", "fat": "0-2" },
+  "churro": { "hydration": "100-120", "salt": "1", "fat": "15-25" },
   "bing": { "hydration": "55-65", "salt": "1", "fat": "10-15" }
 }
