@@ -210,6 +210,9 @@
                 <div class="input-group"><label>Salt (g)</label><input type="number" id="sc-salt" placeholder="e.g. 10" oninput="runSencal()"></div>
                 <div class="input-group"><label>Yeast (g)</label><input type="number" id="sc-yeast" placeholder="e.g. 5" oninput="runSencal()"></div>
                 <div class="input-group"><label>Starter (g)</label><input type="number" id="sc-starter" placeholder="e.g. 100" oninput="runSencal()"></div>
+                <div class="input-group"><label>Baking Powder (g)</label><input type="number" id="sc-baking-powder" placeholder="e.g. 10" oninput="runSencal()"></div>
+                <div class="input-group"><label>Baking Soda (g)</label><input type="number" id="sc-baking-soda" placeholder="e.g. 3" oninput="runSencal()"></div>
+                <div class="input-group"><label>Acidic Liquids/Cocoa (g)</label><input type="number" id="sc-acid" placeholder="e.g. 50" oninput="runSencal()" title="Buttermilk, yogurt, lemon juice, or natural cocoa powder"></div>
             </div>
 
             <div class="sencal-section-title">Enrichments</div>
@@ -331,6 +334,12 @@
             const salt = parseFloat(document.getElementById('sc-salt').value) || 0;
             const yeast = parseFloat(document.getElementById('sc-yeast').value) || 0;
             const starter = parseFloat(document.getElementById('sc-starter').value) || 0;
+            
+            // NEW VARIABLES ADDED HERE
+            const bakingPowder = parseFloat(document.getElementById('sc-baking-powder').value) || 0;
+            const bakingSoda = parseFloat(document.getElementById('sc-baking-soda').value) || 0;
+            const acid = parseFloat(document.getElementById('sc-acid').value) || 0;
+            
             const butter = parseFloat(document.getElementById('sc-butter').value) || 0;
             const sugar = parseFloat(document.getElementById('sc-sugar').value) || 0;
             const eggs = parseFloat(document.getElementById('sc-eggs').value) || 0;
@@ -340,14 +349,18 @@
 
             // Universal Math Engine
             const trueFlour = flour + (starter * 0.5);
-            // Liquid milk is ~87% water. Eggs are ~75% water. Milk powder adds solids, not hydration.
-            const trueWater = water + (starter * 0.5) + (milkLiq * 0.87) + (eggs * 0.75); 
+            // Liquid milk is ~87% water. Eggs are ~75% water. Acid (like buttermilk) is roughly 90% water. Milk powder adds solids, not hydration.
+            const trueWater = water + (starter * 0.5) + (milkLiq * 0.87) + (eggs * 0.75) + (acid * 0.9); 
             
             const hydration = (trueWater / trueFlour) * 100;
             const fatPct = (butter / trueFlour) * 100;
             const sugarPct = (sugar / trueFlour) * 100;
             const saltPct = (salt / trueFlour) * 100;
             const yeastPct = (yeast / trueFlour) * 100;
+            
+            // NEW PERCENTAGE CALCULATIONS ADDED HERE
+            const bpPct = (bakingPowder / trueFlour) * 100;
+            const bsPct = (bakingSoda / trueFlour) * 100;
 
             // Universal Baseline Detection
             let detectedType = "Standard Lean Bread";
@@ -381,7 +394,7 @@
                 idealTemp = "180°C (350°F)"; idealTime = "10-15 mins";
                 procedure = "Cream butter and sugar to incorporate air. Add eggs and vanilla. Fold in dry ingredients just until combined. Chill dough for at least 2 hours to control spreading. Scoop and bake.";
             } 
-            else if (target.includes("muffin") || target.includes("quick") || target.includes("scone")) {
+            else if (target.includes("muffin") || target.includes("quick") || target.includes("scone") || target.includes("biscuit")) {
                 detectedType = "Quick Bread / Muffin"; typeIcon = "🧁";
                 idealTemp = "200°C (400°F) for 5 mins, then 175°C (350°F)"; idealTime = "15-25 mins";
                 procedure = "Mix dry ingredients in one bowl. Mix wet ingredients in another. Fold wet into dry until *just* combined (lumps are fine). Overmixing causes tunneling and toughness. Bake immediately.";
@@ -425,13 +438,41 @@
             else if (detectedType.includes("Choux")) {
                 if (hydration < 100) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Hydration too low.</div><p class="solution"><strong>💡 Fix:</strong> Choux pastry requires massive hydration (125-150% including eggs) because it relies entirely on steam to puff up. Add more liquid/eggs.</p></div>`; }
             }
-            else if (detectedType.includes("Cookie")) {
-                if (sugarPct < 50) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar.</div><p class="solution"><strong>💡 Fix:</strong> Traditional cookies need 80-100% sugar-to-flour ratio for proper spread, caramelization, and chewiness.</p></div>`; }
-                if (fatPct < 40) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Fat.</div><p class="solution"><strong>💡 Fix:</strong> Cookies rely on fat for tenderness. Consider increasing butter to 60-80%.</p></div>`; }
-            }
-            else if (detectedType.includes("Cake") || detectedType.includes("Muffin")) {
-                if (hydration < 60) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Batter is too dry.</div><p class="solution"><strong>💡 Fix:</strong> Add more liquid (milk/buttermilk) to ensure a tender, moist crumb.</p></div>`; }
-                if (sugarPct < 40 && !target.includes("muffin")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar for Cake.</div><p class="solution"><strong>💡 Fix:</strong> The texture will be more similar to bread or a scone. Cakes usually require 80-100% sugar.</p></div>`; }
+            
+            // NEW PASTRY CHEF LOGIC ADDED HERE
+            else if (detectedType.includes("Cookie") || detectedType.includes("Cake") || detectedType.includes("Quick Bread / Muffin")) {
+                
+                if (sugarPct < 40 && detectedType.includes("Cake") && !target.includes("muffin")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar for Cake.</div><p class="solution"><strong>💡 Fix:</strong> The texture will be more similar to bread or a scone. Cakes usually require 80-100% sugar.</p></div>`; }
+                
+                if (sugarPct < 50 && detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Sugar.</div><p class="solution"><strong>💡 Fix:</strong> Traditional cookies need 80-100% sugar-to-flour ratio for proper spread, caramelization, and chewiness.</p></div>`; }
+                
+                if (fatPct < 40 && detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis">📉 Low Fat.</div><p class="solution"><strong>💡 Fix:</strong> Cookies rely on fat for tenderness. Consider increasing butter to 60-80%.</p></div>`; }
+
+                if (hydration < 60 && !detectedType.includes("Cookie")) { issuesFound++; html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Batter is too dry.</div><p class="solution"><strong>💡 Fix:</strong> Add more liquid (milk/buttermilk) to ensure a tender, moist crumb.</p></div>`; }
+
+                // 1. Missing Leavener Check
+                if (yeast === 0 && starter === 0 && bakingPowder === 0 && bakingSoda === 0) { 
+                    issuesFound++; 
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ No Leavening Agent.</div><p class="solution"><strong>💡 Fix:</strong> This batter will bake flat and dense. Add baking powder (typically 2-4%) or baking soda (0.5-1% with an acid).</p></div>`; 
+                }
+                
+                // 2. Baking Powder Overdose Check
+                if (bpPct > 5) { 
+                    issuesFound++; 
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Excessive Baking Powder.</div><p class="solution"><strong>💡 Fix:</strong> Anything over 5% can cause the batter to rapidly over-expand and then collapse in the oven, leaving a metallic taste. Reduce to 2-4%.</p></div>`; 
+                }
+
+                // 3. Baking Soda Overdose Check
+                if (bsPct > 1.5) { 
+                    issuesFound++; 
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Excessive Baking Soda.</div><p class="solution"><strong>💡 Fix:</strong> Baking soda is highly alkaline. Over 1.5% will leave a harsh, soapy flavor. Reduce to 0.5-1%.</p></div>`; 
+                }
+
+                // 4. Baking Soda without Acid Check
+                if (bakingSoda > 0 && acid === 0) {
+                    issuesFound++;
+                    html += `<div class="insight-block"><div class="diagnosis alert-diagnosis">⚠️ Baking Soda needs an Acid.</div><p class="solution"><strong>💡 Fix:</strong> Baking soda requires an acidic ingredient (buttermilk, yogurt, natural cocoa, lemon juice) to activate and neutralize its soapy flavor. Add an acid, or switch to Baking Powder.</p></div>`;
+                }
             }
             else { 
                 // Bread Logic (Lean & Enriched)
