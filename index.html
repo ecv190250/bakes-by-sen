@@ -344,7 +344,74 @@
                 <i class="fa-solid fa-print"></i> Print Diagnostic Report
             </button>
         </div>
+        <button class="no-print" onclick="printSencal()" style="margin-top:20px; width:100%; padding:12px; background:#d97706; color:white; border:none; border-radius:6px; cursor:pointer; font-family:'Poppins', sans-serif; font-size: 1rem; font-weight: 600;">
+                <i class="fa-solid fa-print"></i> Print Diagnostic Report
+            </button>
+        </div>
 
+        <!-- ========================================== -->
+        <!-- SENLAB: INGREDIENT LABORATORY              -->
+        <!-- ========================================== -->
+        <div class="senlab-container">
+            <h2><i class="fa-solid fa-flask"></i> SenLab: Ingredient Laboratory</h2>
+            <p class="lab-subtitle">Experiment with formulas, track nutrition, and discover smart structural substitutions.</p>
+            
+            <div class="lab-workbench">
+                <!-- Input Panel -->
+                <div class="lab-inputs">
+                    <label for="labIngredient">Select Ingredient:</label>
+                    <select id="labIngredient" onchange="updateSubNotes()">
+                        <optgroup label="Flours & Starters">
+                            <option value="bread_flour">Bread Flour (White)</option>
+                            <option value="sourdough_starter">Sourdough Starter (Active)</option>
+                            <option value="sourdough_discard">Sourdough Discard (Unfed)</option>
+                        </optgroup>
+                        <optgroup label="Fats & Sugars">
+                            <option value="butter">Unsalted Butter</option>
+                            <option value="granulated_sugar">Granulated Sugar</option>
+                        </optgroup>
+                        <optgroup label="Liquids & Dairy Alternatives">
+                            <option value="whole_milk">Whole Milk</option>
+                            <option value="oat_milk">Oat Milk (Plant-Based)</option>
+                            <option value="soy_milk">Soy Milk (Plant-Based)</option>
+                        </optgroup>
+                        <optgroup label="Binders">
+                            <option value="eggs">Whole Eggs</option>
+                        </optgroup>
+                    </select>
+
+                    <label for="labWeight">Weight (grams):</label>
+                    <input type="number" id="labWeight" value="100" min="1">
+
+                    <button type="button" class="lab-btn" onclick="addIngredientToLab()"><i class="fa-solid fa-plus"></i> Synthesize Mixture</button>
+                </div>
+
+                <!-- Live Substitution Advice Display -->
+                <div id="subNotesDisplay" class="sub-notes-box">
+                    <!-- Dynamic substitution insights appear here instantly on change -->
+                </div>
+            </div>
+
+            <!-- Lab Results Area -->
+            <div class="lab-results-grid">
+                <div class="current-mixture-box">
+                    <h3>Current Lab Mixture</h3>
+                    <ul id="labMixtureList"></ul>
+                    <button id="clearLabBtn" onclick="clearLab()" style="display:none;">Clear Bench</button>
+                </div>
+
+                <div class="nutrition-facts-box">
+                    <h3><i class="fa-solid fa-chart-pie"></i> Combined Nutrition Profile</h3>
+                    <div class="nutri-stat"><span>Total Calories:</span> <strong id="totalCalories">0</strong> kcal</div>
+                    <div class="nutri-stat"><span>Total Fats:</span> <strong id="totalFats">0</strong>g</div>
+                    <div class="nutri-stat"><span>Key Vitamins/Minerals:</span> <span id="totalVitamins" class="vitamin-tags">None</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading-state">
+            <i class="fa-solid fa-cookie-bite fa-spin" style="margin-right: 10px;"></i> Warming the ovens...
+        </div>
         <div id="loading" class="loading-state">
             <i class="fa-solid fa-cookie-bite fa-spin" style="margin-right: 10px;"></i> Warming the ovens...
         </div>
