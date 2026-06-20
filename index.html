@@ -206,6 +206,12 @@
             .chat-window { position: fixed; bottom: 0; right: 0; width: 100vw; height: 100vh; border-radius: 0; }
             .chat-window.active { transform: translateY(0); }
         }
+        
+        /* Chat UI Upgrades (Loading & Retry) */
+        .chat-loading-text { font-size: 0.85rem; color: #888; display: flex; align-items: center; gap: 8px; padding-top: 2px; }
+        .chat-retry-btn { margin-top: 10px; background: #f3f4f6; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; color: #4b5563; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; font-family: 'Poppins', sans-serif; }
+        .chat-retry-btn:hover { background: #e5e7eb; color: var(--alert); border-color: var(--alert); }
+        
     </style>
 </head>
 <body>
@@ -975,68 +981,140 @@
             }
         }
 
-     async function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    const body = document.getElementById('chatBody');
-    const messageText = input.value.trim();
-
-    if (messageText === '') return;
-
-    // 1. Append User Message
-    const userDiv = document.createElement('div');
-    userDiv.className = 'msg-bubble msg-user';
-    userDiv.textContent = messageText;
-    body.appendChild(userDiv);
-    
-    input.value = '';
-    body.scrollTop = body.scrollHeight;
-
-    const lowerInput = messageText.toLowerCase();
-    let response = "";
-
-    // STRICT GREETING LOGIC
-    const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
-    if (isGreeting) {
-        response = "Hello there, Chef Erick! What are we baking from scratch today?";
-    } else if (lowerInput.includes('help') && messageText.split(' ').length < 3) {
-        response = "I am here to help! You can ask me about scaling, dough consistency, or any specific baking technique.";
-    }
-
-    // 3. If no greeting was triggered, send to True AI
-    if (response === "") {
-        try {
-            const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    question: messageText,
-                    context: {
-                        target: document.getElementById('sc-target').value,
-                        flour: document.getElementById('sc-flour').value
-                    }
-                })
-            });
-            const data = await aiResponse.json();
+     async function sendChatMessage(retryText = null) {
+            const input = document.getElementById('chatInput');
+            const body = document.getElementById('chatBody');
             
-            // --- UPDATED: PROFESSIONAL ERROR HANDLING ---
-            if (data.answer && data.answer.includes("Quota exceeded")) {
-                response = "The ovens are at full capacity right now, Chef! Let me clear a shelf—please try your question again in just a moment.";
-            } else {
-                response = data.answer;
+            // 1. Retrieve and sanitize the message
+            const rawText = retryText !== null ? retryText : input.value;
+            const messageText = rawText.trim();
+
+            if (!messageText) return;
+
+            // Helper to keep chat scrolled to the bottom
+            const scrollToBottom = () => { body.scrollTop = body.scrollHeight; };
+
+            // 2. Render User Message (Only if it's a fresh send)
+            if (retryText === null) {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'msg-bubble msg-user';
+                userDiv.textContent = messageText; // Using textContent strictly prevents XSS injection
+                body.appendChild(userDiv);
+                input.value = '';
+            }
+            
+            scrollToBottom();
+
+            const lowerInput = messageText.toLowerCase();
+            let responseHTML = "";
+            let isError = false;
+
+            // 3. Fast-Path / Static Logic (Saves API calls and speeds up simple queries)
+            const greetings = ['hi', 'hello', 'hey'];
+            if (greetings.includes(lowerInput)) {
+                responseHTML = marked.parse("Hello there, Chef Erick! What are we baking from scratch today?");
+            } else if (lowerInput.includes('help') && messageText.split(' ').length < 3) {
+                responseHTML = marked.parse("I am here to help! You can ask me about scaling, dough consistency, or any specific baking technique.");
             }
 
-        } catch (error) {
-            response = "I'm having trouble connecting to the ovens. Please check your worker deployment.";
-        }
-    }
+            // 4. API Call with Timeout & Advanced Error Handling
+            if (!responseHTML) {
+                // Generate Loading Bubble
+                const loadingId = `loading-${Date.now()}`;
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'msg-bubble msg-bot';
+                loadingDiv.id = loadingId;
+                loadingDiv.innerHTML = `
+                    <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
+                    <div class="chat-loading-text">
+                        <i class="fa-solid fa-cookie-bite fa-spin"></i> 
+                        <em>Checking the recipe books...</em>
+                    </div>
+                `;
+                body.appendChild(loadingDiv);
+                scrollToBottom();
 
-    // 4. Render the Response
-    const botDiv = document.createElement('div');
-    botDiv.innerHTML = `
-                <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-                <div>${marked.parse(response)}</div>
-            `;
-    body.appendChild(botDiv);
-    body.scrollTop = body.scrollHeight;
+                // Set a 15-second timeout controller so the fetch doesn't hang indefinitely 
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                try {
+                    // Safely gather context variables (falls back to empty string if element is missing on a specific page)
+                    const targetEl = document.getElementById('sc-target');
+                    const flourEl = document.getElementById('sc-flour');
+
+                    const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
+                        method: 'POST',
+                        signal: controller.signal,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            question: messageText,
+                            context: {
+                                target: targetEl ? targetEl.value : '',
+                                flour: flourEl ? flourEl.value : ''
+                            }
+                        })
+                    });
+
+                    if (!aiResponse.ok) throw new Error(`HTTP error! status: ${aiResponse.status}`);
+
+                    const data = await aiResponse.json();
+                    
+                    if (data.answer && data.answer.includes("Quota exceeded")) {
+                        isError = true;
+                        responseHTML = "<p>The ovens are at full capacity right now! Let me clear a shelf—please try your question again in just a moment.</p>";
+                    } else {
+                        // Safely parse the markdown
+                        responseHTML = marked.parse(data.answer || "I'm not quite sure how to answer that.");
+                    }
+                } catch (error) {
+                    isError = true;
+                    if (error.name === 'AbortError') {
+                        responseHTML = "<p>The connection timed out. The dough might be resting too long! Try again.</p>";
+                    } else {
+                        responseHTML = "<p>I'm having trouble connecting to the ovens right now. Please check your network or try again later.</p>";
+                    }
+                    console.error("AI Chat Error:", error);
+                } finally {
+                    // ALWAYS clear the timeout and remove the loading spinner
+                    clearTimeout(timeoutId);
+                    const loader = document.getElementById(loadingId);
+                    if (loader) loader.remove();
+                }
+            }
+
+            // 5. Securely Render Final Bot Response & Bind Retry Button
+            const botDiv = document.createElement('div');
+            botDiv.className = 'msg-bubble msg-bot';
+            
+            // Avatar
+            const avatarImg = document.createElement('img');
+            avatarImg.src = "images/erick-pic-.jpg";
+            avatarImg.alt = "Erick";
+            avatarImg.className = "msg-bot-avatar";
+            botDiv.appendChild(avatarImg);
+
+            // Message Container
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = responseHTML; 
+            
+            // Append dynamic Retry button directly via DOM if needed (Highly secure, avoids escaping issues)
+            if (isError) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'chat-retry-btn';
+                retryBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Retry Question';
+                
+                // Binds the exact text to the click without needing ugly string replacements
+                retryBtn.onclick = () => sendChatMessage(messageText); 
+                
+                contentDiv.appendChild(document.createElement('br'));
+                contentDiv.appendChild(retryBtn);
+            }
+
+            botDiv.appendChild(contentDiv);
+            body.appendChild(botDiv);
+            scrollToBottom();
+        }
 }
 
         // Initialize fetch on page load
