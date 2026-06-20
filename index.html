@@ -377,6 +377,73 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+
+        // ==========================================
+        // BAKING DICTIONARY ENGINE
+        // ==========================================
+        let dictionaryData = {};
+
+        async function openGlossary() {
+            const modal = document.getElementById('glossaryModal');
+            if(modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            if (Object.keys(dictionaryData).length === 0) {
+                try {
+                    const res = await fetch('dictionary.json');
+                    dictionaryData = await res.json();
+                    
+                    const sortedKeys = Object.keys(dictionaryData).sort();
+                    const sortedData = {};
+                    sortedKeys.forEach(k => sortedData[k] = dictionaryData[k]);
+                    dictionaryData = sortedData;
+                    
+                    renderGlossary(dictionaryData);
+                } catch (e) {
+                    document.getElementById('glossaryList').innerHTML = '<p style="color:var(--alert); text-align:center; margin-top:20px;">Could not load the dictionary. Did you create dictionary.json in GitHub?</p>';
+                }
+            }
+        }
+
+        function closeGlossary(e) {
+            if (e.target.id === 'glossaryModal' || e.target.classList.contains('chat-close-btn')) {
+                document.getElementById('glossaryModal').classList.remove('active');
+                document.body.style.overflow = ''; 
+            }
+        }
+
+        function renderGlossary(data) {
+            const list = document.getElementById('glossaryList');
+            if(!list) return;
+            list.innerHTML = '';
+            
+            if (Object.keys(data).length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#888; margin-top:20px;">No matching terms found.</p>';
+                return;
+            }
+
+            for (const [term, def] of Object.entries(data)) {
+                list.innerHTML += `
+                    <div class="glossary-item">
+                        <div class="glossary-term">${term}</div>
+                        <div class="glossary-def">${def}</div>
+                    </div>`;
+            }
+        }
+
+        function filterGlossary() {
+            const query = document.getElementById('glossarySearch').value.toLowerCase();
+            const filtered = {};
+            for (const [term, def] of Object.entries(dictionaryData)) {
+                if (term.toLowerCase().includes(query) || def.toLowerCase().includes(query)) {
+                    filtered[term] = def;
+                }
+            }
+            renderGlossary(filtered);
+        }
+        
         // Sidebar Logic
         const menuBtn = document.getElementById('menuBtn');
         const closeBtn = document.getElementById('closeBtn');
