@@ -845,11 +845,10 @@
 
     // 4. Render the Response
     const botDiv = document.createElement('div');
-    botDiv.className = 'msg-bubble msg-bot';
     botDiv.innerHTML = `
-        <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-        <div>${response}</div>
-    `;
+                <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
+                <div>${marked.parse(response)}</div>
+            `;
     body.appendChild(botDiv);
     body.scrollTop = body.scrollHeight;
 }
