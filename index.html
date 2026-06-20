@@ -299,6 +299,15 @@
                 <div class="input-group"><label>Eggs (g)</label><input type="number" id="sc-eggs" placeholder="e.g. 100" oninput="runSencal()"></div>
             </div>
 
+            <div class="sencal-section-title">Temperature Control (DDT)</div>
+            <div class="sencal-inputs">
+                <div class="input-group"><label>Target Dough Temp (°C)</label><input type="number" id="ddt-target" value="25" oninput="calculateDDT()"></div>
+                <div class="input-group"><label>Room Temp (°C)</label><input type="number" id="ddt-room" placeholder="e.g. 22" oninput="calculateDDT()"></div>
+                <div class="input-group"><label>Flour Temp (°C)</label><input type="number" id="ddt-flour" placeholder="e.g. 21" oninput="calculateDDT()"></div>
+                <div class="input-group"><label>Friction Factor (°C)</label><input type="number" id="ddt-friction" placeholder="Machine: 10, Hand: 2" oninput="calculateDDT()"></div>
+            </div>
+            <div id="ddt-result" style="display: none; background: #e0f2fe; padding: 15px; border-left: 4px solid #0284c7; margin-top: 15px; border-radius: 4px; font-weight: 500; color: #0369a1;"></div>        
+           
             <div class="sencal-results" id="sencal-output"></div>
             
             <button class="no-print" onclick="printSencal()" style="margin-top:20px; width:100%; padding:12px; background:#d97706; color:white; border:none; border-radius:6px; cursor:pointer; font-family:'Poppins', sans-serif; font-size: 1rem; font-weight: 600;">
@@ -451,6 +460,7 @@
         // ==========================================
         // THE UNIVERSAL SMART BAKING ENGINE
         // ==========================================
+        
         function runSencal() {
             const target = document.getElementById('sc-target').value.toLowerCase().trim();
             const flour = parseFloat(document.getElementById('sc-flour').value) || 0;
@@ -711,6 +721,28 @@
             outputBox.innerHTML = html;
         }
 
+        
+        // ==========================================
+        // DESIRED DOUGH TEMPERATURE (DDT) ENGINE
+        // ==========================================
+        function calculateDDT() {
+            const target = parseFloat(document.getElementById('ddt-target').value) || 0;
+            const room = parseFloat(document.getElementById('ddt-room').value) || 0;
+            const flour = parseFloat(document.getElementById('ddt-flour').value) || 0;
+            const friction = parseFloat(document.getElementById('ddt-friction').value) || 0;
+            const resultBox = document.getElementById('ddt-result');
+
+            if (target > 0 && room > 0 && flour > 0) {
+                // Formula: Water Temp = (Target * 3) - (Room + Flour + Friction)
+                let waterTemp = (target * 3) - (room + flour + friction);
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = `🧊 <strong>Required Water Temp:</strong> ${waterTemp.toFixed(1)}°C <br><span style="font-size:0.85rem; font-weight:normal; color:#0c4a6e;">Use water at this exact temperature to achieve your ${target}°C final dough.</span>`;
+            } else {
+                resultBox.style.display = 'none';
+            }
+        }
+
+        
         // Print Recipe Logic (Blog Cards)
         window.printRecipe = function(btnElement) {
             const card = btnElement.closest('.bake-card');
