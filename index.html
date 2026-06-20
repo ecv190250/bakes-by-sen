@@ -789,64 +789,70 @@
             }
         }
 
-        async function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const body = document.getElementById('chatBody');
-            const messageText = input.value.trim();
+     async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const body = document.getElementById('chatBody');
+    const messageText = input.value.trim();
 
-            if (messageText === '') return;
+    if (messageText === '') return;
 
-            // 1. Append User Message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg-bubble msg-user';
-            userDiv.textContent = messageText;
-            body.appendChild(userDiv);
+    // 1. Append User Message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'msg-bubble msg-user';
+    userDiv.textContent = messageText;
+    body.appendChild(userDiv);
+    
+    input.value = '';
+    body.scrollTop = body.scrollHeight;
+
+    const lowerInput = messageText.toLowerCase();
+    let response = "";
+
+    // STRICT GREETING LOGIC
+    const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
+    if (isGreeting) {
+        response = "Hello there, Chef Erick! What are we baking from scratch today?";
+    } else if (lowerInput.includes('help') && messageText.split(' ').length < 3) {
+        response = "I am here to help! You can ask me about scaling, dough consistency, or any specific baking technique.";
+    }
+
+    // 3. If no greeting was triggered, send to True AI
+    if (response === "") {
+        try {
+            const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    question: messageText,
+                    context: {
+                        target: document.getElementById('sc-target').value,
+                        flour: document.getElementById('sc-flour').value
+                    }
+                })
+            });
+            const data = await aiResponse.json();
             
-            input.value = '';
-            body.scrollTop = body.scrollHeight;
-
-            const lowerInput = messageText.toLowerCase();
-            let response = "";
-
-            // STRICT GREETING LOGIC: Only triggers if the message is just a greeting
-            const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
-            
-            if (isGreeting) {
-                response = "Hello there, Chef Erick! What are we baking from scratch today?";
-            } else if (lowerInput.includes('help') && messageText.split(' ').length < 3) {
-                response = "I am here to help! You can ask me about scaling, dough consistency, or any specific baking technique.";
+            // SMART ERROR HANDLING
+            if (data.answer && data.answer.includes("Quota exceeded")) {
+                response = "The ovens are running a bit busy right now (rate limit). Please wait 30 seconds and ask again!";
+            } else {
+                response = data.answer;
             }
 
-            // 3. If no greeting was triggered, send to True AI (The Intelligence Layer)
-            if (response === "") {
-                try {
-                    const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
-                        method: 'POST',
-                        body: JSON.stringify({ 
-                            question: messageText,
-                            context: {
-                                target: document.getElementById('sc-target').value,
-                                flour: document.getElementById('sc-flour').value
-                            }
-                        })
-                    });
-                    const data = await aiResponse.json();
-                    response = data.answer;
-                } catch (error) {
-                    response = "I'm having trouble connecting to the ovens. Please check your worker deployment.";
-                }
-            }
-
-            // 4. Render the Response
-            const botDiv = document.createElement('div');
-            botDiv.className = 'msg-bubble msg-bot';
-            botDiv.innerHTML = `
-                <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-                <div>${response}</div>
-            `;
-            body.appendChild(botDiv);
-            body.scrollTop = body.scrollHeight;
+        } catch (error) {
+            response = "I'm having trouble connecting to the ovens. Please check your worker deployment.";
         }
+    }
+
+    // 4. Render the Response
+    const botDiv = document.createElement('div');
+    botDiv.className = 'msg-bubble msg-bot';
+    botDiv.innerHTML = `
+        <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
+        <div>${response}</div>
+    `;
+    body.appendChild(botDiv);
+    body.scrollTop = body.scrollHeight;
+}
 
         // Initialize fetch on page load
         fetchMyFoodPosts();
