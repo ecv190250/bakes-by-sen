@@ -808,44 +808,6 @@
             const lowerInput = messageText.toLowerCase();
             let response = "";
 
-            const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
-            if (isGreeting) response = "Hello there, Chef Erick! What are we baking from scratch today?";
-            else if (lowerInput.includes('help') && messageText.split(' ').length < 3) response = "I am here to help! Ask me about scaling, dough consistency, or baking techniques.";
-
-            if (response === "") {
-                try {
-                    const aiResponse = await fetch('https://bakes-ai-proxy.rikzhash1902.workers.dev', {
-                        method: 'POST',
-                        body: JSON.stringify({ 
-                            question: messageText,
-                            context: { target: document.getElementById('sc-target').value, flour: document.getElementById('sc-flour').value }
-                        })
-                    });
-                    const data = await aiResponse.json();
-                    response = data.answer;
-
-                    // --- NEW: FRIENDLY ERROR HANDLING ---
-                    if (response.includes("Quota exceeded")) {
-                        response = "The ovens are a bit busy right now! My connection to the ingredient database is currently limited. Please give me about 30 seconds to reset.";
-                    }
-                } catch (error) {
-                    response = "I'm having trouble connecting to the ovens. Please check your worker deployment.";
-                }
-            }
-
-            const botDiv = document.createElement('div');
-            botDiv.className = 'msg-bubble msg-bot';
-            botDiv.innerHTML = `
-                <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-                <div>${response}</div>
-            `;
-            body.appendChild(botDiv);
-            body.scrollTop = body.scrollHeight;
-        }
-
-            const lowerInput = messageText.toLowerCase();
-            let response = "";
-
             // STRICT GREETING LOGIC: Only triggers if the message is just a greeting
             const isGreeting = (lowerInput === 'hi' || lowerInput === 'hello' || lowerInput === 'hey');
             
