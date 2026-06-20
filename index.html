@@ -831,9 +831,9 @@
             });
             const data = await aiResponse.json();
             
-            // SMART ERROR HANDLING
+            // --- UPDATED: PROFESSIONAL ERROR HANDLING ---
             if (data.answer && data.answer.includes("Quota exceeded")) {
-                response = "The ovens are running a bit busy right now (rate limit). Please wait 30 seconds and ask again!";
+                response = "I'm currently focusing on a complex calculation in the back of the kitchen. Give me a quick moment to reset—please try your question again in 30 seconds, Chef!";
             } else {
                 response = data.answer;
             }
