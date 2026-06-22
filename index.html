@@ -395,6 +395,8 @@
                     <h3><i class="fa-solid fa-chart-pie"></i> Combined Nutrition Profile</h3>
                     <div class="nutri-stat"><span>Total Calories:</span> <strong id="totalCalories">0</strong> kcal</div>
                     <div class="nutri-stat"><span>Total Fats:</span> <strong id="totalFats">0</strong>g</div>
+                    <div class="nutri-stat"><span>Total Protein:</span> <strong id="totalProtein">0</strong>g</div>
+                    <div class="nutri-stat"><span>Total Carbohydrates:</span> <strong id="totalCarbs">0</strong>g</div>
                     <div class="nutri-stat"><span>Key Vitamins/Minerals:</span> <span id="totalVitamins" class="vitamin-tags">None</span></div>
                 </div>
             </div>
@@ -1201,78 +1203,62 @@
         // ==========================================
         // SENLAB: INGREDIENT LABORATORY ENGINE
         // ==========================================
-        function toggleSenlab() {
+        let senLabDatabase = {}; // Empty vault, waiting for the JSON file!
+        let activeLabMixture = [];
+
+        // 1. The Connection Engine: Fetches your JSON data
+        async function loadSenLabData() {
+            if (Object.keys(senLabDatabase).length === 0) {
+                try {
+                    const response = await fetch('senlab-data.json');
+                    senLabDatabase = await response.json();
+                } catch (error) {
+                    document.getElementById('subNotesDisplay').innerHTML = '<p style="color:red;">Error loading database. Make sure senlab-data.json is uploaded to GitHub!</p>';
+                }
+            }
+        }
+
+        // 2. The Button Engine: Opens the lab and loads data
+        async function toggleSenlab() {
             const labApp = document.getElementById('senlab-app');
             if (labApp.style.display === 'none' || labApp.style.display === '') {
+                await loadSenLabData(); // Go get the JSON file!
                 labApp.style.display = 'block';
                 labApp.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+                updateSubNotes(); // Display the first ingredient's notes
             } else {
                 labApp.style.display = 'none';
             }
         }
 
-        const senLabDatabase = {
-            bread_flour: {
-                name: "Bread Flour (White)", calories: 364, fat: 1.5, vitamins: ["Iron", "B-Vitamins"],
-                substitution: { altName: "Whole Wheat Flour", ratio: "1:1 by weight", effect: "Increases water absorption significantly. Expect a denser crumb profile, shorter gluten strands, and a nuttier flavor. Increase hydration by 5-10% to compensate." }
-            },
-            sourdough_starter: {
-                name: "Sourdough Starter (100% Hydration)", calories: 182, fat: 0.4, vitamins: ["B1 (Thiamin)", "B6", "Zinc"],
-                substitution: { altName: "Poolish (50g Flour + 50g Water + 0.5g Instant Yeast)", ratio: "1:1 replacement by weight", effect: "Replaces wild fermentation with commercial yeast. You will lose the signature lactic/acetic acid 'tang'. Dough will rise significantly faster." }
-            },
-            sourdough_discard: {
-                name: "Sourdough Discard (Unfed)", calories: 182, fat: 0.4, vitamins: ["B-Vitamins", "Lactic Acid"],
-                substitution: { altName: "Equal parts Flour and Water", ratio: "1:1 replacement", effect: "Discard is highly acidic with weak, broken-down gluten. If substituting out, you lose the distinct sourdough flavor notes." }
-            },
-            butter: {
-                name: "Unsalted Butter", calories: 717, fat: 81.0, vitamins: ["Vitamin A", "Vitamin E", "Vitamin D"],
-                substitution: { altName: "Coconut Oil", ratio: "1:1 by weight", effect: "Maintains required fat levels but alters texture because coconut oil lacks butter's 16-18% water content. Bakes will turn out slightly crunchier/greasier; lacks classic dairy aroma." }
-            },
-            whole_milk: {
-                name: "Whole Milk", calories: 61, fat: 3.3, vitamins: ["Calcium", "Vitamin D", "Riboflavin"],
-                substitution: { altName: "Water + 1 tbsp Fat per cup", ratio: "1:1 liquid exchange", effect: "Stripping dairy fat and milk sugars (lactose) means the crust will brown much slower and the overall crumb texturing will lose its rich, tender mouthfeel." }
-            },
-            oat_milk: {
-                name: "Oat Milk (Barista/Plain)", calories: 52, fat: 1.5, vitamins: ["Calcium", "Vitamin B12", "Riboflavin"],
-                substitution: { altName: "Whole Dairy Milk", ratio: "1:1 replacement", effect: "Oat milk contains beta-glucans which natively retain moisture, keeping crumbs soft. However, it lacks milk's structural casein proteins, making the crumb structure slightly more delicate." }
-            },
-            soy_milk: {
-                name: "Soy Milk (Unsweetened)", calories: 54, fat: 1.8, vitamins: ["Vitamin B12", "Vitamin D", "Magnesium"],
-                substitution: { altName: "Whole Dairy Milk", ratio: "1:1 replacement", effect: "Soy milk is the closest structural match to dairy because its soy proteins mimic milk proteins well, providing excellent crumb stability." }
-            },
-            granulated_sugar: {
-                name: "Granulated Sugar", calories: 387, fat: 0.0, vitamins: ["None"],
-                substitution: { altName: "Honey", ratio: "Use 75g per 100g of sugar", effect: "Honey adds liquid moisture and speeds up crust browning drastically due to fructose. Lower your oven temperature by roughly 15°C (25°F) to avoid premature burning." }
-            },
-            eggs: {
-                name: "Whole Eggs", calories: 143, fat: 9.5, vitamins: ["Vitamin D", "Vitamin B12", "Selenium"],
-                substitution: { altName: "Aquafaba (Chickpea liquid)", ratio: "approx. 60g per large egg", effect: "Mimics structural binding and whipping properties decently well, but completely strips out the emulsifying lecithin and fats found in egg yolks. Crumb will be lighter and drier." }
-            }
-        };
-
-        let activeLabMixture = [];
-
+        // 3. The Display Engine: Shows Functional Role & Substitutions
         function updateSubNotes() {
             const ingKey = document.getElementById('labIngredient').value;
             const itemData = senLabDatabase[ingKey];
             const displayBox = document.getElementById('subNotesDisplay');
             
-            if (itemData && itemData.substitution) {
+            if (itemData) {
                 const sub = itemData.substitution;
                 displayBox.innerHTML = `
-                    <h4><i class="fa-solid fa-vial-circle-check"></i> Lab Substitution Blueprint</h4>
-                    <p><strong>If out of ${itemData.name}:</strong> Use <u>${sub.altName}</u> (${sub.ratio}).</p>
-                    <p class="effect-text"><strong>Chemical Reaction / Baking Effect:</strong> ${sub.effect}</p>
+                    <h4><i class="fa-solid fa-microscope"></i> Baking Science: ${itemData.name}</h4>
+                    <p style="margin-bottom: 10px; font-size: 0.95rem; color: #444;"><strong>Functional Role:</strong> ${itemData.functional_role}</p>
+                    <hr style="border: 0; border-top: 1px dotted #ccc; margin: 12px 0;">
+                    <h4><i class="fa-solid fa-vial-circle-check"></i> Substitution Blueprint</h4>
+                    <p><strong>If out of stock:</strong> Use <u>${sub.altName}</u> (${sub.ratio}).</p>
+                    <p class="effect-text"><strong>Chemical/Structural Effect:</strong> ${sub.effect}</p>
                 `;
             }
         }
 
+        // 4. The Math Engine: Adds the macros together
         function addIngredientToLab() {
             const ingKey = document.getElementById('labIngredient').value;
             const weight = parseFloat(document.getElementById('labWeight').value);
             if (isNaN(weight) || weight <= 0) return;
 
             const databaseItem = senLabDatabase[ingKey];
+            if (!databaseItem) return;
+
             const existingIndex = activeLabMixture.findIndex(item => item.key === ingKey);
             
             if (existingIndex > -1) {
@@ -1284,27 +1270,37 @@
         }
 
         function calculateLabNutrition() {
-            let totals = { calories: 0, fat: 0, vitamins: new Set() };
+            let totals = { calories: 0, fat: 0, protein: 0, carbs: 0, vitamins: new Set() };
             const listContainer = document.getElementById('labMixtureList');
             listContainer.innerHTML = '';
 
             activeLabMixture.forEach(item => {
                 const base = senLabDatabase[item.key];
                 const factor = item.weight / 100;
+                
                 const itemCal = Math.round(base.calories * factor);
                 const itemFat = parseFloat((base.fat * factor).toFixed(1));
-                base.vitamins.forEach(v => { if(v !== "None") totals.vitamins.add(v) });
+                const itemProtein = parseFloat((base.protein * factor).toFixed(1));
+                const itemCarbs = parseFloat((base.carbohydrates * factor).toFixed(1));
+                
+                if (base.vitamins) {
+                    base.vitamins.forEach(v => { if(v !== "None") totals.vitamins.add(v) });
+                }
 
                 totals.calories += itemCal;
                 totals.fat += itemFat;
+                totals.protein += itemProtein;
+                totals.carbs += itemCarbs;
 
                 const li = document.createElement('li');
-                li.innerHTML = `🔬 <strong>${item.weight}g</strong> - ${item.name} <span class="item-nutri-summary">(${itemCal} kcal, ${itemFat}g Fat)</span>`;
+                li.innerHTML = `🔬 <strong>${item.weight}g</strong> - ${item.name} <span class="item-nutri-summary">(${itemCal} kcal, ${itemProtein}g P, ${itemCarbs}g C, ${itemFat}g F)</span>`;
                 listContainer.appendChild(li);
             });
 
             document.getElementById('totalCalories').textContent = totals.calories;
             document.getElementById('totalFats').textContent = totals.fat.toFixed(1);
+            document.getElementById('totalProtein').textContent = totals.protein.toFixed(1);
+            document.getElementById('totalCarbs').textContent = totals.carbs.toFixed(1);
             
             const vitContainer = document.getElementById('totalVitamins');
             if (totals.vitamins.size > 0) {
@@ -1320,12 +1316,6 @@
             activeLabMixture = [];
             calculateLabNutrition();
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if(document.getElementById('labIngredient')) {
-                updateSubNotes();
-            }
-        });
         
     </script>
 </body>
