@@ -559,18 +559,4 @@
       "effect": "Table salt crystals are much finer. Measuring by volume will result in drastically over-salted dough. Always substitute salt by weight."
     }
   }
-  "cream_of_tartar": {
-    "name": "Cream of Tartar (Potassium Bitartrate)",
-    "calories": 258,
-    "fat": 0.0,
-    "protein": 0.0,
-    "carbohydrates": 61.0,
-    "vitamins": ["Potassium"],
-    "functional_role": "Dry acid byproduct of winemaking. Stabilizes whipped egg whites by denaturing proteins, prevents sugar crystallization in syrups, and activates baking soda.",
-    "substitution": {
-      "altName": "Lemon Juice or White Vinegar",
-      "ratio": "1/2 tsp per 1/4 tsp Cream of Tartar",
-      "effect": "Introduces liquid into the recipe. Works well for stabilizing egg whites, but cannot be used in dry mixes (like homemade baking powder)."
-    }
-  }
 }
