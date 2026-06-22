@@ -1,0 +1,423 @@
+{
+  "bread_flour": {
+    "name": "Bread Flour (White)",
+    "calories": 364,
+    "fat": 1.5,
+    "protein": 13.0,
+    "carbohydrates": 73.0,
+    "vitamins": ["Iron", "B-Vitamins"],
+    "functional_role": "Provides primary structural framework via a strong gluten network.",
+    "substitution": {
+      "altName": "Whole Wheat Flour",
+      "ratio": "1:1 by weight",
+      "effect": "Increases water absorption significantly. Expect a denser crumb profile, shorter gluten strands, and a nuttier flavor. Increase hydration by 5-10% to compensate."
+    }
+  },
+  "all_purpose_flour": {
+    "name": "All-Purpose Flour (Unbleached)",
+    "calories": 364,
+    "fat": 1.0,
+    "protein": 10.5,
+    "carbohydrates": 76.0,
+    "vitamins": ["Iron", "Folic Acid", "Riboflavin"],
+    "functional_role": "Provides moderate structure suitable for tender baked goods like cakes, cookies, and quick breads.",
+    "substitution": {
+      "altName": "Bread Flour",
+      "ratio": "1:1 by weight",
+      "effect": "Increases chewiness and structure. Cookies may become thicker and bread-like; cakes will become tough. Hydration may need a slight 2-3% increase."
+    }
+  },
+  "rye_flour": {
+    "name": "Dark Rye Flour",
+    "calories": 325,
+    "fat": 2.0,
+    "protein": 11.0,
+    "carbohydrates": 74.0,
+    "vitamins": ["Manganese", "Phosphorus", "Copper"],
+    "functional_role": "Adds dense texture, high enzyme activity (amylase), and complex earthy flavors. Contains high pentosans which compete for water.",
+    "substitution": {
+      "altName": "Whole Wheat Flour",
+      "ratio": "1:1 by weight",
+      "effect": "Wheat will introduce much more gluten-forming potential than rye. The dough will feel less sticky, be easier to handle, and rise higher."
+    }
+  },
+  "sourdough_starter": {
+    "name": "Sourdough Starter (100% Hydration)",
+    "calories": 182,
+    "fat": 0.4,
+    "protein": 5.5,
+    "carbohydrates": 40.0,
+    "vitamins": ["B1 (Thiamin)", "B6", "Zinc"],
+    "functional_role": "Biological leavening (CO2 production) and flavor development (lactic/acetic acid).",
+    "substitution": {
+      "altName": "Poolish (50g Flour + 50g Water + 0.5g Instant Yeast)",
+      "ratio": "1:1 replacement by weight",
+      "effect": "Replaces wild fermentation with commercial yeast. You will lose the signature lactic/acetic acid 'tang'. Dough will rise significantly faster."
+    }
+  },
+  "sourdough_discard": {
+    "name": "Sourdough Discard (Unfed)",
+    "calories": 182,
+    "fat": 0.4,
+    "protein": 5.5,
+    "carbohydrates": 40.0,
+    "vitamins": ["B-Vitamins", "Lactic Acid"],
+    "functional_role": "Flavor enhancement, moisture retention, and tenderization due to degraded gluten.",
+    "substitution": {
+      "altName": "Equal parts Flour and Water",
+      "ratio": "1:1 replacement",
+      "effect": "Discard is highly acidic with weak, broken-down gluten. If substituting out, you lose the distinct sourdough flavor notes and natural dough conditioning."
+    }
+  },
+  "active_dry_yeast": {
+    "name": "Active Dry Yeast",
+    "calories": 325,
+    "fat": 8.0,
+    "protein": 38.0,
+    "carbohydrates": 41.0,
+    "vitamins": ["B-Vitamins", "Zinc"],
+    "functional_role": "Commercial biological leavening. Requires hydration in warm water (35-40°C) to break dormancy.",
+    "substitution": {
+      "altName": "Instant Yeast",
+      "ratio": "Use 0.75g Instant for every 1g Active Dry",
+      "effect": "Instant yeast can be mixed directly into dry ingredients without blooming. Fermentation will occur roughly 15-20% faster."
+    }
+  },
+  "butter": {
+    "name": "Unsalted Butter",
+    "calories": 717,
+    "fat": 81.0,
+    "protein": 0.8,
+    "carbohydrates": 0.1,
+    "vitamins": ["Vitamin A", "Vitamin E", "Vitamin D"],
+    "functional_role": "Tenderizes crumb by coating flour proteins, provides dairy flavor, and adds steam for flakiness in laminated doughs.",
+    "substitution": {
+      "altName": "Coconut Oil",
+      "ratio": "1:1 by weight",
+      "effect": "Maintains required fat levels but alters texture because coconut oil lacks butter's 16-18% water content. Bakes will turn out slightly crunchier/greasier; lacks classic dairy aroma."
+    }
+  },
+  "olive_oil": {
+    "name": "Extra Virgin Olive Oil",
+    "calories": 884,
+    "fat": 100.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Vitamin E", "Vitamin K"],
+    "functional_role": "100% lipid fat source. Extends shelf life, tenderizes crumb, and imparts herbaceous flavors (common in focaccia).",
+    "substitution": {
+      "altName": "Neutral Oil (Canola/Grapeseed)",
+      "ratio": "1:1 by weight",
+      "effect": "Neutralizes the flavor profile entirely. The physical structure and moisture retention will remain identical."
+    }
+  },
+  "whole_milk": {
+    "name": "Whole Milk",
+    "calories": 61,
+    "fat": 3.3,
+    "protein": 3.2,
+    "carbohydrates": 4.8,
+    "vitamins": ["Calcium", "Vitamin D", "Riboflavin"],
+    "functional_role": "Hydrates dry ingredients, enriches dough via milk fats, and promotes Maillard browning via lactose sugars.",
+    "substitution": {
+      "altName": "Water + 1 tbsp Fat per cup",
+      "ratio": "1:1 liquid exchange",
+      "effect": "Stripping dairy fat and milk sugars (lactose) means the crust will brown much slower and the overall crumb texturing will lose its rich, tender mouthfeel."
+    }
+  },
+  "oat_milk": {
+    "name": "Oat Milk (Barista/Plain)",
+    "calories": 52,
+    "fat": 1.5,
+    "protein": 1.0,
+    "carbohydrates": 8.0,
+    "vitamins": ["Calcium", "Vitamin B12", "Riboflavin"],
+    "functional_role": "Hydrates ingredients and adds high levels of beta-glucans which natively retain moisture, keeping crumbs soft.",
+    "substitution": {
+      "altName": "Whole Dairy Milk",
+      "ratio": "1:1 replacement",
+      "effect": "Dairy milk adds structural casein proteins that oat milk lacks, making the resulting crumb slightly more robust and resilient."
+    }
+  },
+  "soy_milk": {
+    "name": "Soy Milk (Unsweetened)",
+    "calories": 54,
+    "fat": 1.8,
+    "protein": 3.3,
+    "carbohydrates": 3.0,
+    "vitamins": ["Vitamin B12", "Vitamin D", "Magnesium"],
+    "functional_role": "Hydrates ingredients and provides high-protein structural stability comparable to dairy.",
+    "substitution": {
+      "altName": "Whole Dairy Milk",
+      "ratio": "1:1 replacement",
+      "effect": "Produces nearly identical structural results due to the matched protein content. Dairy will slightly increase crust browning."
+    }
+  },
+  "granulated_sugar": {
+    "name": "Granulated Sugar (Sucrose)",
+    "calories": 387,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 100.0,
+    "vitamins": ["None"],
+    "functional_role": "Provides sweetness, speeds up yeast fermentation, retains moisture (hygroscopic), and drives caramelization/Maillard browning.",
+    "substitution": {
+      "altName": "Honey",
+      "ratio": "Use 75g per 100g of sugar",
+      "effect": "Honey adds liquid moisture and speeds up crust browning drastically due to fructose. Lower your oven temperature by roughly 15°C (25°F) to avoid premature burning."
+    }
+  },
+  "honey": {
+    "name": "Raw Honey",
+    "calories": 304,
+    "fat": 0.0,
+    "protein": 0.3,
+    "carbohydrates": 82.0,
+    "vitamins": ["Vitamin C", "Antioxidants"],
+    "functional_role": "Invert sugar source. Increases shelf life via extreme moisture retention and speeds up crust browning drastically.",
+    "substitution": {
+      "altName": "Granulated Sugar",
+      "ratio": "Use 1.25x the weight in sugar, add 15ml liquid",
+      "effect": "Dough will brown slower in the oven and lack the slightly acidic, floral notes of honey. Staling process will begin slightly faster."
+    }
+  },
+  "eggs": {
+    "name": "Whole Eggs",
+    "calories": 143,
+    "fat": 9.5,
+    "protein": 12.6,
+    "carbohydrates": 0.7,
+    "vitamins": ["Vitamin D", "Vitamin B12", "Selenium"],
+    "functional_role": "Provides structural coagulation (whites), emulsification of fats and water (yolk lecithin), and aeration when whipped.",
+    "substitution": {
+      "altName": "Aquafaba (Chickpea liquid)",
+      "ratio": "approx. 60g per large egg",
+      "effect": "Mimics structural binding and whipping properties decently well, but completely strips out the emulsifying lecithin and fats found in egg yolks. Crumb will be lighter and drier."
+    }
+  },
+  "baking_soda": {
+    "name": "Baking Soda (Sodium Bicarbonate)",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Sodium"],
+    "functional_role": "Chemical leavener. Requires an acidic ingredient (buttermilk, yogurt, honey) to react and produce CO2.",
+    "substitution": {
+      "altName": "Baking Powder",
+      "ratio": "Use 3x the amount by volume",
+      "effect": "Baking powder contains its own acid. Substituting will yield lift, but may leave the recipe's original acidic ingredients un-neutralized, altering flavor."
+    }
+  },
+  "salt": {
+    "name": "Kosher Salt / Sea Salt",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Sodium", "Chloride"],
+    "functional_role": "Enhances flavor, tightens the gluten network (makes dough stronger), and regulates/slows yeast fermentation.",
+    "substitution": {
+      "altName": "Table Salt",
+      "ratio": "Use roughly 50-60% by volume of Kosher salt (or 1:1 by weight)",
+      "effect": "Table salt crystals are much finer. Measuring by volume will result in drastically over-salted dough. Always substitute salt by weight."
+    }
+  }
+{
+  "cake_flour": {
+    "name": "Cake Flour (Bleached)",
+    "calories": 364,
+    "fat": 1.0,
+    "protein": 7.5,
+    "carbohydrates": 79.0,
+    "vitamins": ["Iron", "Thiamin"],
+    "functional_role": "Provides minimal gluten structure. Bleaching (chlorination) alters the starches to absorb more liquid and fat, yielding a highly tender, fine-crumbed texture.",
+    "substitution": {
+      "altName": "All-Purpose Flour + Cornstarch",
+      "ratio": "Replace 2 tbsp of AP flour with cornstarch per cup",
+      "effect": "Lowers the overall protein content to mimic cake flour, but lacks the chlorination, meaning it won't hold sugar and liquid quite as effectively in high-ratio cakes."
+    }
+  },
+  "pastry_flour": {
+    "name": "Pastry Flour",
+    "calories": 364,
+    "fat": 1.2,
+    "protein": 9.0,
+    "carbohydrates": 76.0,
+    "vitamins": ["Iron", "Niacin"],
+    "functional_role": "Strikes a balance between cake and AP flour. Low enough protein to maintain flakiness in pie crusts and biscuits, but enough structure to prevent crumbling.",
+    "substitution": {
+      "altName": "50% AP Flour + 50% Cake Flour",
+      "ratio": "1:1 by weight",
+      "effect": "Blends the mid-level protein of AP with the low-protein of cake flour to approximate the 9% protein target. Hydration needs remain mostly unchanged."
+    }
+  },
+  "vital_wheat_gluten": {
+    "name": "Vital Wheat Gluten",
+    "calories": 370,
+    "fat": 1.8,
+    "protein": 75.0,
+    "carbohydrates": 14.0,
+    "vitamins": ["Selenium", "Phosphorus"],
+    "functional_role": "Pure extracted gluten protein. Acts as a dough strengthener for low-protein flours (like rye or whole wheat), increasing volume, chewiness, and gas retention.",
+    "substitution": {
+      "altName": "Bread Flour (Partial Replacement)",
+      "ratio": "Cannot be directly substituted 1:1",
+      "effect": "If VWG is unavailable, replacing all AP or weak flour with high-protein bread flour is the only natural way to increase dough strength, though it will not be as dramatic."
+    }
+  },
+  "diastatic_malt_powder": {
+    "name": "Diastatic Malt Powder",
+    "calories": 360,
+    "fat": 0.0,
+    "protein": 10.0,
+    "carbohydrates": 80.0,
+    "vitamins": ["B-Vitamins"],
+    "functional_role": "Introduces active amylase enzymes that break down complex flour starches into simple sugars. Feeds yeast during long fermentations and drastically improves crust browning.",
+    "substitution": {
+      "altName": "Non-Diastatic Malt Syrup / Sugar",
+      "ratio": "1:1 by weight",
+      "effect": "Provides immediate sugar for yeast and browning, but lacks the active enzymes. The dough will not benefit from the continuous starch-to-sugar breakdown during proofing."
+    }
+  },
+  "ascorbic_acid": {
+    "name": "Ascorbic Acid (Vitamin C)",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Vitamin C"],
+    "functional_role": "Oxidizing agent/dough conditioner. Micro-doses (0.1%) tighten the gluten network, trap gas more effectively, and force the dough to rise higher and hold its shape.",
+    "substitution": {
+      "altName": "Lemon Juice",
+      "ratio": "1 tsp per loaf",
+      "effect": "Introduces natural ascorbic acid but also adds citric acid and excess liquid, which can slightly alter the flavor profile and hydration."
+    }
+  },
+  "buttermilk": {
+    "name": "Cultured Buttermilk",
+    "calories": 40,
+    "fat": 1.0,
+    "protein": 3.3,
+    "carbohydrates": 4.8,
+    "vitamins": ["Calcium", "Potassium"],
+    "functional_role": "Hydrates dough while providing a highly acidic environment (pH ~4.5). Tenderizes gluten, breaks down phytic acid, and reacts violently with baking soda for instant lift.",
+    "substitution": {
+      "altName": "Milk + White Vinegar",
+      "ratio": "1 cup Milk + 1 tbsp Vinegar (let sit 5 mins)",
+      "effect": "Lowers the pH to react with baking soda, but lacks the lactic acid flavor profile and the viscosity of true cultured buttermilk."
+    }
+  },
+  "heavy_cream": {
+    "name": "Heavy Whipping Cream (36% Fat)",
+    "calories": 340,
+    "fat": 36.0,
+    "protein": 2.8,
+    "carbohydrates": 2.8,
+    "vitamins": ["Vitamin A", "Vitamin D"],
+    "functional_role": "A high-fat dairy liquid that aggressively tenderizes the crumb, shortens gluten strands, and provides an exceptionally rich, velvety mouthfeel (essential for scones and brioche).",
+    "substitution": {
+      "altName": "Whole Milk + Melted Butter",
+      "ratio": "3/4 cup Milk + 1/4 cup Melted Butter per cup",
+      "effect": "Replicates the fat content accurately, but the fat is not homogenized into the liquid the way it is in cream, which can lead to a slightly greasier final product."
+    }
+  },
+  "vegetable_shortening": {
+    "name": "Vegetable Shortening",
+    "calories": 884,
+    "fat": 100.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Vitamin K"],
+    "functional_role": "100% lipid fat with a high melting point. Excellent for cutting into pie crusts to create extreme flakiness, and prevents cookies from spreading in the oven.",
+    "substitution": {
+      "altName": "Unsalted Butter",
+      "ratio": "1:1 by weight",
+      "effect": "Butter contains 20% water/milk solids, so bakes will spread more, brown faster, and be slightly less tender, but will gain a significantly better flavor."
+    }
+  },
+  "baking_powder": {
+    "name": "Baking Powder (Double-Acting)",
+    "calories": 53,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 27.0,
+    "vitamins": ["Calcium"],
+    "functional_role": "Complete chemical leavener. Contains sodium bicarbonate and two acidic salts. Reacts first when hydrated, and a second time when heated above 60°C (140°F) for maximum lift.",
+    "substitution": {
+      "altName": "Baking Soda + Cream of Tartar",
+      "ratio": "1/4 tsp Baking Soda + 1/2 tsp Cream of Tartar = 1 tsp Baking Powder",
+      "effect": "Creates a single-acting baking powder. The batter must be baked immediately upon mixing, as it will only react to hydration and will not get a second lift from oven heat."
+    }
+  },
+  "cream_of_tartar": {
+    "name": "Cream of Tartar (Potassium Bitartrate)",
+    "calories": 258,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 61.0,
+    "vitamins": ["Potassium"],
+    "functional_role": "Dry acid byproduct of winemaking. Stabilizes whipped egg whites by denaturing proteins, prevents sugar crystallization in syrups, and activates baking soda.",
+    "substitution": {
+      "altName": "Lemon Juice or White Vinegar",
+      "ratio": "1/2 tsp per 1/4 tsp Cream of Tartar",
+      "effect": "Introduces liquid into the recipe. Works well for stabilizing egg whites, but cannot be used in dry mixes (like homemade baking powder)."
+    }
+  },
+  "brown_sugar": {
+    "name": "Light Brown Sugar",
+    "calories": 380,
+    "fat": 0.0,
+    "protein": 0.1,
+    "carbohydrates": 98.0,
+    "vitamins": ["Calcium", "Iron"],
+    "functional_role": "Sucrose coated in molasses. Highly hygroscopic (retains moisture), lowers dough pH slightly (reacts with baking soda), and yields a softer, chewier final product than white sugar.",
+    "substitution": {
+      "altName": "White Sugar + Molasses",
+      "ratio": "1 cup White Sugar + 1 tbsp Molasses",
+      "effect": "Perfect structural and flavor match. Rub the molasses into the sugar manually until homogenous."
+    }
+  },
+  "molasses": {
+    "name": "Unsulfured Molasses",
+    "calories": 290,
+    "fat": 0.1,
+    "protein": 0.0,
+    "carbohydrates": 75.0,
+    "vitamins": ["Iron", "Calcium", "Magnesium", "Potassium"],
+    "functional_role": "Liquid invert sugar rich in minerals. Highly acidic (pH ~5.5), retains incredible moisture to extend shelf life, and provides robust, bitter-sweet flavor notes.",
+    "substitution": {
+      "altName": "Dark Corn Syrup or Maple Syrup",
+      "ratio": "1:1 by volume",
+      "effect": "Replicates the liquid and sugar invert properties, preventing crystallization, but completely lacks the depth of flavor, acidity, and dark coloration of molasses."
+    }
+  },
+  "dutch_cocoa_powder": {
+    "name": "Dutch-Processed Cocoa Powder",
+    "calories": 228,
+    "fat": 14.0,
+    "protein": 20.0,
+    "carbohydrates": 58.0,
+    "vitamins": ["Iron", "Magnesium", "Copper"],
+    "functional_role": "Cocoa solids treated with an alkaline solution to neutralize acidity (pH raised to ~7.0-8.0). Darker color, smoother flavor, and absorbs liquid aggressively like flour.",
+    "substitution": {
+      "altName": "Natural Cocoa Powder",
+      "ratio": "1:1 by weight + adjust leavener",
+      "effect": "Natural cocoa is acidic (pH ~5.0). If you swap natural for Dutch, you must add baking soda (about 1/8 tsp per 3 tbsp of cocoa) to neutralize the acid, or the bake will be tart and dense."
+    }
+  },
+  "cornstarch": {
+    "name": "Cornstarch",
+    "calories": 381,
+    "fat": 0.1,
+    "protein": 0.3,
+    "carbohydrates": 91.0,
+    "vitamins": ["None"],
+    "functional_role": "Pure starch extracted from the corn endosperm. Gelatinizes at ~70°C (158°F) to thicken liquids without adding gluten. Creates a 'short' (tender) crumb in shortbreads and cookies.",
+    "substitution": {
+      "altName": "Potato Starch or Arrowroot Powder",
+      "ratio": "1:1 by weight",
+      "effect": "Potato starch gelatinizes at a slightly lower temperature and creates a more delicate, translucent gel, but behaves nearly identically to cornstarch in dry cake and cookie batters."
+    }
+  }
+}
