@@ -419,4 +419,144 @@
       "effect": "Potato starch gelatinizes at a slightly lower temperature and creates a more delicate, translucent gel, but behaves nearly identically to cornstarch in dry cake and cookie batters."
     }
   }
+  "xanthan_gum": {
+    "name": "Xanthan Gum",
+    "calories": 352,
+    "fat": 0.0,
+    "protein": 7.0,
+    "carbohydrates": 82.0,
+    "vitamins": ["None"],
+    "functional_role": "Hydrocolloid. Forms a highly viscous, pseudo-plastic gel that mimics the structural trapping properties of gluten in gluten-free baking.",
+    "substitution": {
+      "altName": "Guar Gum",
+      "ratio": "Use 1.5x the weight of Xanthan",
+      "effect": "Guar gum is better for cold foods and retains moisture well, but doesn't provide the exact same elastic stretch (extensibility) as xanthan in hot baked goods."
+    }
+  },
+  "bakers_ammonia": {
+    "name": "Baker's Ammonia (Ammonium Carbonate)",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["None"],
+    "functional_role": "Thermal chemical leavener. Decomposes entirely into ammonia gas, carbon dioxide, and steam at 60°C. Leaves absolutely no alkaline residue, creating exceptionally crisp, dry cookies.",
+    "substitution": {
+      "altName": "Baking Powder",
+      "ratio": "1:1 by volume",
+      "effect": "Will provide the lift, but leaves behind chemical salts that hold onto moisture. The baked good will not achieve the same ultra-crisp, snappy texture."
+    }
+  },
+  "milk_powder_whole": {
+    "name": "Dry Milk Powder (Whole)",
+    "calories": 496,
+    "fat": 26.0,
+    "protein": 26.0,
+    "carbohydrates": 38.0,
+    "vitamins": ["Calcium", "Vitamin D", "Phosphorus"],
+    "functional_role": "Dough enhancer. Introduces high levels of lactose and casein proteins for deep Maillard browning and crumb softening without adding excess free water to the dough.",
+    "substitution": {
+      "altName": "Liquid Milk",
+      "ratio": "1 cup liquid milk per 1/4 cup powder",
+      "effect": "You must subtract 1 cup of water from the recipe's hydration to balance the liquid milk, which can alter the way the flour initially hydrates and develops gluten."
+    }
+  },
+  "soy_lecithin": {
+    "name": "Soy Lecithin Powder",
+    "calories": 800,
+    "fat": 100.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Choline"],
+    "functional_role": "Pure amphiphilic emulsifier. Binds water and fat molecules at a microscopic level, creating ultra-smooth batters, increasing volume, and preventing staling by slowing starch retrogradation.",
+    "substitution": {
+      "altName": "Egg Yolks",
+      "ratio": "1 large yolk per 1 tbsp lecithin powder",
+      "effect": "Introduces natural water and fat from the egg yolk, altering hydration slightly. Egg lecithin is excellent but not as concentrated as pure commercial soy lecithin."
+    }
+  },
+  "glucose_syrup": {
+    "name": "Glucose Syrup",
+    "calories": 315,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 79.0,
+    "vitamins": ["None"],
+    "functional_role": "Interfering agent. It consists of single-molecule sugars that physically get in the way of sucrose molecules, preventing sugar crystallization in caramels, glazes, and chewy cookies.",
+    "substitution": {
+      "altName": "Light Corn Syrup",
+      "ratio": "1:1 by volume",
+      "effect": "Corn syrup contains added vanilla and sometimes salt, but structurally behaves the same way to prevent crystallization."
+    }
+  },
+  "tapioca_starch": {
+    "name": "Tapioca Starch / Flour",
+    "calories": 358,
+    "fat": 0.0,
+    "protein": 0.2,
+    "carbohydrates": 88.0,
+    "vitamins": ["None"],
+    "functional_role": "High-amylopectin starch. Gelatinizes at low temperatures to create a highly elastic, bouncy, and chewy texture (essential in Brazilian cheese bread/pão de queijo).",
+    "substitution": {
+      "altName": "Cornstarch",
+      "ratio": "1:1 by weight",
+      "effect": "Cornstarch has more amylose, which forms a rigid, opaque gel when cooled. It will thicken the mixture but completely destroy the 'stretchy/chewy' characteristic of tapioca."
+    }
+  },
+  "almond_flour": {
+    "name": "Blanched Almond Flour",
+    "calories": 579,
+    "fat": 49.0,
+    "protein": 21.0,
+    "carbohydrates": 21.0,
+    "vitamins": ["Vitamin E", "Magnesium"],
+    "functional_role": "Lipid-rich bulk ingredient. Provides zero gluten structure. The extremely high fat content tenderizes the crumb by lubricating other structural proteins (like eggs in a macaron).",
+    "substitution": {
+      "altName": "All-Purpose Flour",
+      "ratio": "Cannot be substituted directly",
+      "effect": "Replacing a 50% fat nut flour with a 1% fat wheat flour fundamentally breaks the recipe chemistry. Fat/liquid ratios must be entirely recalculated."
+    }
+  },
+  "l_cysteine": {
+    "name": "L-Cysteine",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 100.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["None"],
+    "functional_role": "Reducing agent / Dough relaxer. An amino acid that actively breaks the disulfide bonds in gluten. Used to stop pizza dough or laminated dough from shrinking/snapping back when rolled.",
+    "substitution": {
+      "altName": "Deactivated Yeast",
+      "ratio": "Use 2% deactivated yeast by baker's math",
+      "effect": "Deactivated (dead) yeast naturally contains glutathione, which acts as a milder reducing agent to relax the dough over a slightly longer period."
+    }
+  },
+  "citric_acid": {
+    "name": "Citric Acid (Anhydrous)",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Vitamin C"],
+    "functional_role": "Dry pH modifier. Drops the pH of dough to tighten the gluten network and boost yeast activity without adding liquid volume. Adds a sharp, sour flavor.",
+    "substitution": {
+      "altName": "Lemon Juice",
+      "ratio": "1 tbsp juice per 1/4 tsp citric acid",
+      "effect": "Introduces significant liquid volume, meaning the hydration of the dough must be adjusted to prevent a sticky, unmanageable crumb."
+    }
+  },
+  "calcium_propionate": {
+    "name": "Calcium Propionate",
+    "calories": 0,
+    "fat": 0.0,
+    "protein": 0.0,
+    "carbohydrates": 0.0,
+    "vitamins": ["Calcium"],
+    "functional_role": "Commercial mold inhibitor. Interferes with the cellular metabolism of molds and bacteria (rope) without significantly lowering the pH enough to kill the baker's yeast.",
+    "substitution": {
+      "altName": "Sourdough Starter",
+      "ratio": "Incorporate 15% starter into the dough",
+      "effect": "The natural lactic and acetic acids produced by sourdough fermentation natively lower the pH to create a natural, albeit less aggressive, anti-microbial environment."
+    }
+  }
 }
