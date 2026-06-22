@@ -348,40 +348,26 @@
         </div>
 
         <div class="senlab-container" id="senlab-app" style="display: none;">
+            
             <h2><i class="fa-solid fa-flask"></i> SenLab: Ingredient Laboratory</h2>
             <p class="lab-subtitle">Experiment with formulas, track nutrition, and discover smart structural substitutions.</p>
-            
+
             <div class="lab-workbench">
                 <div class="lab-inputs">
                     <label for="labIngredient">Select Ingredient:</label>
                     <select id="labIngredient" onchange="updateSubNotes()">
-                        <optgroup label="Flours & Starters">
-                            <option value="bread_flour">Bread Flour (White)</option>
-                            <option value="sourdough_starter">Sourdough Starter (Active)</option>
-                            <option value="sourdough_discard">Sourdough Discard (Unfed)</option>
-                        </optgroup>
-                        <optgroup label="Fats & Sugars">
-                            <option value="butter">Unsalted Butter</option>
-                            <option value="granulated_sugar">Granulated Sugar</option>
-                        </optgroup>
-                        <optgroup label="Liquids & Dairy Alternatives">
-                            <option value="whole_milk">Whole Milk</option>
-                            <option value="oat_milk">Oat Milk (Plant-Based)</option>
-                            <option value="soy_milk">Soy Milk (Plant-Based)</option>
-                        </optgroup>
-                        <optgroup label="Binders">
-                            <option value="eggs">Whole Eggs</option>
-                        </optgroup>
-                    </select>
+                        </select>
 
                     <label for="labWeight">Weight (grams):</label>
                     <input type="number" id="labWeight" value="100" min="1">
 
-                    <button type="button" class="lab-btn" onclick="addIngredientToLab()"><i class="fa-solid fa-plus"></i> Synthesize Mixture</button>
+                    <button type="button" class="lab-btn" onclick="addIngredientToLab()">
+                        <i class="fa-solid fa-plus"></i> Synthesize Mixture
+                    </button>
                 </div>
 
                 <div id="subNotesDisplay" class="sub-notes-box">
-                    </div>
+                </div>
             </div>
 
             <div class="lab-results-grid">
@@ -400,6 +386,7 @@
                     <div class="nutri-stat"><span>Key Vitamins/Minerals:</span> <span id="totalVitamins" class="vitamin-tags">None</span></div>
                 </div>
             </div>
+        
         </div>
 
         <div id="loading" class="loading-state">
@@ -1201,121 +1188,133 @@
         fetchMyFoodPosts();
 
         // ==========================================
-        // SENLAB: INGREDIENT LABORATORY ENGINE
-        // ==========================================
-        let senLabDatabase = {}; // Empty vault, waiting for the JSON file!
-        let activeLabMixture = [];
+// SENLAB: FINAL PRODUCTION ENGINE
+// ==========================================
+let senLabDatabase = {}; 
+let activeLabMixture = [];
 
-        // 1. The Connection Engine: Fetches your JSON data
-        async function loadSenLabData() {
-            if (Object.keys(senLabDatabase).length === 0) {
-                try {
-                    const response = await fetch('senlab-data.json');
-                    senLabDatabase = await response.json();
-                } catch (error) {
-                    document.getElementById('subNotesDisplay').innerHTML = '<p style="color:red;">Error loading database. Make sure senlab-data.json is uploaded to GitHub!</p>';
-                }
-            }
+// 1. Connection Engine: Loads the JSON file and builds the menu
+async function loadSenLabData() {
+    if (Object.keys(senLabDatabase).length === 0) {
+        try {
+            const response = await fetch('senlab-data.json');
+            if (!response.ok) throw new Error("Could not find senlab-data.json");
+            senLabDatabase = await response.json();
+            populateIngredientDropdown(); // Build the menu after data arrives
+        } catch (error) {
+            console.error("Lab Error:", error);
+            document.getElementById('subNotesDisplay').innerHTML = '<p style="color:red;">Error loading database. Check your JSON file.</p>';
+        }
+    }
+}
+
+// 2. Populate Engine: Fills the dropdown menu automatically
+function populateIngredientDropdown() {
+    const dropdown = document.getElementById('labIngredient');
+    dropdown.innerHTML = ''; // Empty the list
+    
+    // Create an option for every ingredient in your JSON
+    Object.keys(senLabDatabase).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = senLabDatabase[key].name;
+        dropdown.appendChild(option);
+    });
+    updateSubNotes(); // Show data for the first item
+}
+
+// 3. Open Engine: The "Click" trigger
+async function toggleSenlab() {
+    const labApp = document.getElementById('senlab-app');
+    if (labApp.style.display === 'none' || labApp.style.display === '') {
+        await loadSenLabData(); // Wait for data to load
+        labApp.style.display = 'block';
+        labApp.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+    } else {
+        labApp.style.display = 'none';
+    }
+}
+
+// 4. Update Engine: Shows Functional Role & Substitutions
+function updateSubNotes() {
+    const ingKey = document.getElementById('labIngredient').value;
+    const itemData = senLabDatabase[ingKey];
+    const displayBox = document.getElementById('subNotesDisplay');
+    
+    if (itemData) {
+        const sub = itemData.substitution;
+        displayBox.innerHTML = `
+            <h4><i class="fa-solid fa-microscope"></i> Baking Science: ${itemData.name}</h4>
+            <p style="margin-bottom: 10px; font-size: 0.95rem; color: #444;"><strong>Functional Role:</strong> ${itemData.functional_role}</p>
+            <hr style="border: 0; border-top: 1px dotted #ccc; margin: 12px 0;">
+            <h4><i class="fa-solid fa-vial-circle-check"></i> Substitution Blueprint</h4>
+            <p><strong>If out of stock:</strong> Use <u>${sub.altName}</u> (${sub.ratio}).</p>
+            <p class="effect-text"><strong>Effect:</strong> ${sub.effect}</p>
+        `;
+    }
+}
+
+// 5. Math Engine: Adds the macros (Protein/Carbs)
+function addIngredientToLab() {
+    const ingKey = document.getElementById('labIngredient').value;
+    const weight = parseFloat(document.getElementById('labWeight').value);
+    if (isNaN(weight) || weight <= 0) return;
+
+    const databaseItem = senLabDatabase[ingKey];
+    if (!databaseItem) return;
+
+    const existingIndex = activeLabMixture.findIndex(item => item.key === ingKey);
+    
+    if (existingIndex > -1) {
+        activeLabMixture[existingIndex].weight += weight;
+    } else {
+        activeLabMixture.push({ key: ingKey, name: databaseItem.name, weight: weight });
+    }
+    calculateLabNutrition();
+}
+
+function calculateLabNutrition() {
+    let totals = { calories: 0, fat: 0, protein: 0, carbohydrates: 0, vitamins: new Set() };
+    const listContainer = document.getElementById('labMixtureList');
+    listContainer.innerHTML = '';
+
+    activeLabMixture.forEach(item => {
+        const base = senLabDatabase[item.key];
+        const factor = item.weight / 100;
+        
+        const itemCal = Math.round(base.calories * factor);
+        const itemFat = parseFloat((base.fat * factor).toFixed(1));
+        const itemProtein = parseFloat((base.protein * factor).toFixed(1));
+        const itemCarbs = parseFloat((base.carbohydrates * factor).toFixed(1));
+        
+        if (base.vitamins) {
+            base.vitamins.forEach(v => { if(v !== "None") totals.vitamins.add(v) });
         }
 
-        // 2. The Button Engine: Opens the lab and loads data
-        async function toggleSenlab() {
-            const labApp = document.getElementById('senlab-app');
-            if (labApp.style.display === 'none' || labApp.style.display === '') {
-                await loadSenLabData(); // Go get the JSON file!
-                labApp.style.display = 'block';
-                labApp.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
-                updateSubNotes(); // Display the first ingredient's notes
-            } else {
-                labApp.style.display = 'none';
-            }
-        }
+        totals.calories += itemCal;
+        totals.fat += itemFat;
+        totals.protein += itemProtein;
+        totals.carbohydrates += itemCarbs;
 
-        // 3. The Display Engine: Shows Functional Role & Substitutions
-        function updateSubNotes() {
-            const ingKey = document.getElementById('labIngredient').value;
-            const itemData = senLabDatabase[ingKey];
-            const displayBox = document.getElementById('subNotesDisplay');
-            
-            if (itemData) {
-                const sub = itemData.substitution;
-                displayBox.innerHTML = `
-                    <h4><i class="fa-solid fa-microscope"></i> Baking Science: ${itemData.name}</h4>
-                    <p style="margin-bottom: 10px; font-size: 0.95rem; color: #444;"><strong>Functional Role:</strong> ${itemData.functional_role}</p>
-                    <hr style="border: 0; border-top: 1px dotted #ccc; margin: 12px 0;">
-                    <h4><i class="fa-solid fa-vial-circle-check"></i> Substitution Blueprint</h4>
-                    <p><strong>If out of stock:</strong> Use <u>${sub.altName}</u> (${sub.ratio}).</p>
-                    <p class="effect-text"><strong>Chemical/Structural Effect:</strong> ${sub.effect}</p>
-                `;
-            }
-        }
+        const li = document.createElement('li');
+        li.innerHTML = `🔬 <strong>${item.weight}g</strong> - ${item.name} <span class="item-nutri-summary">(${itemCal} kcal, ${itemProtein}g P, ${itemCarbs}g C, ${itemFat}g F)</span>`;
+        listContainer.appendChild(li);
+    });
 
-        // 4. The Math Engine: Adds the macros together
-        function addIngredientToLab() {
-            const ingKey = document.getElementById('labIngredient').value;
-            const weight = parseFloat(document.getElementById('labWeight').value);
-            if (isNaN(weight) || weight <= 0) return;
+    document.getElementById('totalCalories').textContent = totals.calories;
+    document.getElementById('totalFats').textContent = totals.fat.toFixed(1);
+    document.getElementById('totalProtein').textContent = totals.protein.toFixed(1);
+    document.getElementById('totalCarbs').textContent = totals.carbohydrates.toFixed(1);
+    
+    const vitContainer = document.getElementById('totalVitamins');
+    vitContainer.innerHTML = Array.from(totals.vitamins).map(v => `<span class="vit-tag">${v}</span>`).join(' ') || "None";
+    document.getElementById('clearLabBtn').style.display = activeLabMixture.length > 0 ? 'inline-block' : 'none';
+}
 
-            const databaseItem = senLabDatabase[ingKey];
-            if (!databaseItem) return;
-
-            const existingIndex = activeLabMixture.findIndex(item => item.key === ingKey);
-            
-            if (existingIndex > -1) {
-                activeLabMixture[existingIndex].weight += weight;
-            } else {
-                activeLabMixture.push({ key: ingKey, name: databaseItem.name, weight: weight });
-            }
-            calculateLabNutrition();
-        }
-
-        function calculateLabNutrition() {
-            let totals = { calories: 0, fat: 0, protein: 0, carbs: 0, vitamins: new Set() };
-            const listContainer = document.getElementById('labMixtureList');
-            listContainer.innerHTML = '';
-
-            activeLabMixture.forEach(item => {
-                const base = senLabDatabase[item.key];
-                const factor = item.weight / 100;
-                
-                const itemCal = Math.round(base.calories * factor);
-                const itemFat = parseFloat((base.fat * factor).toFixed(1));
-                const itemProtein = parseFloat((base.protein * factor).toFixed(1));
-                const itemCarbs = parseFloat((base.carbohydrates * factor).toFixed(1));
-                
-                if (base.vitamins) {
-                    base.vitamins.forEach(v => { if(v !== "None") totals.vitamins.add(v) });
-                }
-
-                totals.calories += itemCal;
-                totals.fat += itemFat;
-                totals.protein += itemProtein;
-                totals.carbs += itemCarbs;
-
-                const li = document.createElement('li');
-                li.innerHTML = `🔬 <strong>${item.weight}g</strong> - ${item.name} <span class="item-nutri-summary">(${itemCal} kcal, ${itemProtein}g P, ${itemCarbs}g C, ${itemFat}g F)</span>`;
-                listContainer.appendChild(li);
-            });
-
-            document.getElementById('totalCalories').textContent = totals.calories;
-            document.getElementById('totalFats').textContent = totals.fat.toFixed(1);
-            document.getElementById('totalProtein').textContent = totals.protein.toFixed(1);
-            document.getElementById('totalCarbs').textContent = totals.carbs.toFixed(1);
-            
-            const vitContainer = document.getElementById('totalVitamins');
-            if (totals.vitamins.size > 0) {
-                vitContainer.innerHTML = Array.from(totals.vitamins).map(v => `<span class="vit-tag">${v}</span>`).join(' ');
-            } else {
-                vitContainer.textContent = "None";
-            }
-
-            document.getElementById('clearLabBtn').style.display = activeLabMixture.length > 0 ? 'inline-block' : 'none';
-        }
-
-        function clearLab() {
-            activeLabMixture = [];
-            calculateLabNutrition();
-        }
+function clearLab() {
+    activeLabMixture = [];
+    calculateLabNutrition();
+}
         
     </script>
 </body>
