@@ -222,7 +222,7 @@
       "ratio": "Use roughly 50-60% by volume of Kosher salt (or 1:1 by weight)",
       "effect": "Table salt crystals are much finer. Measuring by volume will result in drastically over-salted dough. Always substitute salt by weight."
     }
-  }
+  },
   "cake_flour": {
     "name": "Cake Flour (Bleached)",
     "calories": 364,
@@ -419,3 +419,4 @@
       "effect": "Potato starch gelatinizes at a slightly lower temperature and creates a more delicate, translucent gel, but behaves nearly identically to cornstarch in dry cake and cookie batters."
     }
   }
+}
