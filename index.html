@@ -893,29 +893,43 @@
             setTimeout(() => { document.body.classList.remove('printing-card'); card.classList.remove('print-active'); }, 500);
         };
 
-        // Giscus Comment Load Logic
-        window.loadComments = function(title, containerId, btnElement) {
-            const container = document.getElementById(containerId);
-            if(container.innerHTML !== '') return; 
-            btnElement.style.display = 'none'; 
-            const giscusScript = document.createElement('script');
-            giscusScript.src = "https://giscus.app/client.js";
-            giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
-            giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
-            giscusScript.setAttribute("data-category", "General");
-            giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
-            giscusScript.setAttribute("data-mapping", "specific");
-            giscusScript.setAttribute("data-term", title);
-            giscusScript.setAttribute("data-strict", "0");
-            giscusScript.setAttribute("data-reactions-enabled", "1");
-            giscusScript.setAttribute("data-emit-metadata", "0");
-            giscusScript.setAttribute("data-input-position", "bottom");
-            giscusScript.setAttribute("data-theme", "light");
-            giscusScript.setAttribute("data-lang", "en");
-            giscusScript.setAttribute("crossorigin", "anonymous");
-            giscusScript.async = true;
-            container.appendChild(giscusScript);
-        };
+        // Giscus Comment Load Logic (Autopilot Mode)
+window.loadComments = function(title, containerId, btnElement) {
+    const container = document.getElementById(containerId);
+    if(container.innerHTML !== '') return; 
+    
+    // UI Upgrade: Loading state instead of disappearing
+    btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading comments...';
+    btnElement.disabled = true;
+    btnElement.style.opacity = '0.7';
+    
+    const giscusScript = document.createElement('script');
+    giscusScript.src = "https://giscus.app/client.js";
+    giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
+    giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
+    giscusScript.setAttribute("data-category", "General");
+    giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
+    
+    // --- CRITICAL FIX: 'pathname' for Autopilot! ---
+    giscusScript.setAttribute("data-mapping", "pathname");
+    // ------------------------------------------------
+    
+    giscusScript.setAttribute("data-strict", "0");
+    giscusScript.setAttribute("data-reactions-enabled", "1");
+    giscusScript.setAttribute("data-emit-metadata", "0");
+    giscusScript.setAttribute("data-input-position", "bottom");
+    giscusScript.setAttribute("data-theme", "light");
+    giscusScript.setAttribute("data-lang", "en");
+    giscusScript.setAttribute("crossorigin", "anonymous");
+    giscusScript.async = true;
+    
+    // When Giscus finishes loading, remove the loading button entirely
+    giscusScript.onload = function() {
+        btnElement.remove();
+    };
+    
+    container.appendChild(giscusScript);
+};
 
         // Search & Recipe Logic
         let globalRecipes = [];
@@ -1188,8 +1202,8 @@
         fetchMyFoodPosts();
 
         // ==========================================
-// SENLAB: FINAL PRODUCTION ENGINE
-// ==========================================
+       // SENLAB: FINAL PRODUCTION ENGINE
+      // ==========================================
 let senLabDatabase = {}; 
 let activeLabMixture = [];
 
