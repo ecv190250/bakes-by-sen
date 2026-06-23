@@ -893,60 +893,67 @@
             setTimeout(() => { document.body.classList.remove('printing-card'); card.classList.remove('print-active'); }, 500);
         };
 
-        // Giscus Comment Load Logic (Reset Engine + Loading State)
+        // Giscus Comment Load Logic (The "Teleportation" Engine)
 window.loadComments = function(title, containerId, btnElement) {
-    const container = document.getElementById(containerId);
-    if(container.innerHTML !== '') return; 
-    
-    // 1. CLEANUP: Close any other open comment rooms on the page
-    document.querySelectorAll('.giscus-container').forEach(room => {
-        room.innerHTML = ''; 
-    });
-    
-    // 2. RESET: Bring back all other buttons and reset their text
+    const targetRoom = document.getElementById(containerId);
+
+    // If the comment box is already inside this specific room, do nothing
+    if (targetRoom.querySelector('.giscus')) return;
+
+    // 1. RESET: Bring back all the "Comments" buttons on the page
     document.querySelectorAll('.comment-btn').forEach(btn => {
-        // Only reset buttons that aren't the print button
         if(!btn.classList.contains('print-btn')) {
             btn.style.display = 'inline-flex';
-            btn.innerHTML = '<i class="fa-solid fa-comments"></i> Comments';
-            btn.disabled = false;
-            btn.style.opacity = '1';
         }
     });
-    
-    // 3. LOADING STATE: Change the clicked button to a spinner
-    btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading...';
-    btnElement.disabled = true;
-    btnElement.style.opacity = '0.7';
-    
-    // 4. BUILD GISCUS
-    const giscusScript = document.createElement('script');
-    giscusScript.src = "https://giscus.app/client.js";
-    giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
-    giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
-    giscusScript.setAttribute("data-category", "General");
-    giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
-    
-    // --- We use 'specific' so each recipe gets its own thread ---
-    giscusScript.setAttribute("data-mapping", "specific");
-    giscusScript.setAttribute("data-term", title);
-    // -------------------------------------------------------------
-    
-    giscusScript.setAttribute("data-strict", "0");
-    giscusScript.setAttribute("data-reactions-enabled", "1");
-    giscusScript.setAttribute("data-emit-metadata", "0");
-    giscusScript.setAttribute("data-input-position", "bottom");
-    giscusScript.setAttribute("data-theme", "light");
-    giscusScript.setAttribute("data-lang", "en");
-    giscusScript.setAttribute("crossorigin", "anonymous");
-    giscusScript.async = true;
-    
-    // 5. WHEN FINISHED: Hide the button (do not use .remove()!)
-    giscusScript.onload = function() {
-        btnElement.style.display = 'none';
-    };
-    
-    container.appendChild(giscusScript);
+
+    // 2. HIDE: Make the button they just clicked disappear
+    btnElement.style.display = 'none';
+
+    // 3. SEARCH: Look to see if Giscus is already alive anywhere on the page
+    const existingGiscus = document.querySelector('.giscus');
+
+    if (existingGiscus) {
+        // MAGIC TRICK: Teleport the existing comment box to the new recipe!
+        targetRoom.appendChild(existingGiscus);
+
+        // Tell the Giscus system to switch to the new recipe's comments
+        const iframe = existingGiscus.querySelector('iframe.giscus-frame');
+        if (iframe) {
+            iframe.contentWindow.postMessage(
+                { giscus: { setConfig: { term: title } } },
+                'https://giscus.app'
+            );
+        }
+    } else {
+        // FIRST TIME ONLY: Build the comment engine from scratch
+        targetRoom.innerHTML = '<div id="giscus-loading" style="text-align: center; color: #d48a44; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Warming up the comment oven...</div>';
+
+        const giscusScript = document.createElement('script');
+        giscusScript.src = "https://giscus.app/client.js";
+        giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
+        giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
+        giscusScript.setAttribute("data-category", "General");
+        giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
+        giscusScript.setAttribute("data-mapping", "specific");
+        giscusScript.setAttribute("data-term", title);
+        giscusScript.setAttribute("data-strict", "0");
+        giscusScript.setAttribute("data-reactions-enabled", "1");
+        giscusScript.setAttribute("data-emit-metadata", "0");
+        giscusScript.setAttribute("data-input-position", "bottom");
+        giscusScript.setAttribute("data-theme", "light");
+        giscusScript.setAttribute("data-lang", "en");
+        giscusScript.setAttribute("crossorigin", "anonymous");
+        giscusScript.async = true;
+
+        // Clean up the loading text once it arrives
+        giscusScript.onload = function() {
+            const loader = document.getElementById('giscus-loading');
+            if(loader) loader.remove();
+        };
+
+        targetRoom.appendChild(giscusScript);
+    }
 };
 
         // Search & Recipe Logic
