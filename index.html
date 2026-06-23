@@ -926,7 +926,6 @@ window.loadComments = function(title, containerId, btnElement) {
     // When Giscus finishes loading, remove the loading button entirely
     giscusScript.onload = function() {
         btnElement.remove();
-    };
     
     container.appendChild(giscusScript);
 };
