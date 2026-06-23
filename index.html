@@ -106,6 +106,23 @@
             body.printing-sencal #sencal-app { box-shadow: none; border: none; margin: 0; padding: 0; display: block !important; }
         }
 
+        @media print {
+            body { background: white; color: black; }
+            .no-print { display: none !important; }
+            body.printing-card > *:not(main) { display: none !important; }
+            body.printing-card main > *:not(#posts-container) { display: none !important; }
+            body.printing-card #posts-container > .bake-card:not(.print-active) { display: none !important; }
+            .bake-card.print-active { box-shadow: none; border: none; margin: 0; padding: 0; page-break-inside: avoid; }
+            body.printing-sencal > *:not(main) { display: none !important; }
+            body.printing-sencal main > *:not(#sencal-app) { display: none !important; }
+            body.printing-sencal #sencal-app { box-shadow: none; border: none; margin: 0; padding: 0; display: block !important; }
+            
+            /* ADD THESE 3 LINES FOR SENLAB RIGHT HERE */
+            body.printing-senlab > *:not(main) { display: none !important; }
+            body.printing-senlab main > *:not(#senlab-app) { display: none !important; }
+            body.printing-senlab #senlab-app { box-shadow: none; border: none; margin: 0; padding: 0; display: block !important; }
+        }
+        
         /* ------------------------------------- */
         /* BAKES BY SEN: SENCAL DIAGNOSTIC CSS   */
         /* ------------------------------------- */
@@ -884,77 +901,104 @@
         }
 
         
-        // Print Recipe Logic (Blog Cards)
+        // ==========================================
+        // MASTER PRINTING ENGINES
+        // ==========================================
+
+        // 1. Print Logic for Recipe Cards
         window.printRecipe = function(btnElement) {
             const card = btnElement.closest('.bake-card');
             document.body.classList.add('printing-card');
             card.classList.add('print-active');
             window.print();
-            setTimeout(() => { document.body.classList.remove('printing-card'); card.classList.remove('print-active'); }, 500);
+            setTimeout(() => { 
+                document.body.classList.remove('printing-card'); 
+                card.classList.remove('print-active'); 
+            }, 500);
         };
 
-        // Giscus Comment Load Logic (The "Teleportation" Engine)
-window.loadComments = function(title, containerId, btnElement) {
-    const targetRoom = document.getElementById(containerId);
-
-    // If the comment box is already inside this specific room, do nothing
-    if (targetRoom.querySelector('.giscus')) return;
-
-    // 1. RESET: Bring back all the "Comments" buttons on the page
-    document.querySelectorAll('.comment-btn').forEach(btn => {
-        if(!btn.classList.contains('print-btn')) {
-            btn.style.display = 'inline-flex';
-        }
-    });
-
-    // 2. HIDE: Make the button they just clicked disappear
-    btnElement.style.display = 'none';
-
-    // 3. SEARCH: Look to see if Giscus is already alive anywhere on the page
-    const existingGiscus = document.querySelector('.giscus');
-
-    if (existingGiscus) {
-        // MAGIC TRICK: Teleport the existing comment box to the new recipe!
-        targetRoom.appendChild(existingGiscus);
-
-        // Tell the Giscus system to switch to the new recipe's comments
-        const iframe = existingGiscus.querySelector('iframe.giscus-frame');
-        if (iframe) {
-            iframe.contentWindow.postMessage(
-                { giscus: { setConfig: { term: title } } },
-                'https://giscus.app'
-            );
-        }
-    } else {
-        // FIRST TIME ONLY: Build the comment engine from scratch
-        targetRoom.innerHTML = '<div id="giscus-loading" style="text-align: center; color: #d48a44; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Warming up the comment oven...</div>';
-
-        const giscusScript = document.createElement('script');
-        giscusScript.src = "https://giscus.app/client.js";
-        giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
-        giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
-        giscusScript.setAttribute("data-category", "General");
-        giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
-        giscusScript.setAttribute("data-mapping", "specific");
-        giscusScript.setAttribute("data-term", title);
-        giscusScript.setAttribute("data-strict", "0");
-        giscusScript.setAttribute("data-reactions-enabled", "1");
-        giscusScript.setAttribute("data-emit-metadata", "0");
-        giscusScript.setAttribute("data-input-position", "bottom");
-        giscusScript.setAttribute("data-theme", "light");
-        giscusScript.setAttribute("data-lang", "en");
-        giscusScript.setAttribute("crossorigin", "anonymous");
-        giscusScript.async = true;
-
-        // Clean up the loading text once it arrives
-        giscusScript.onload = function() {
-            const loader = document.getElementById('giscus-loading');
-            if(loader) loader.remove();
+        // 2. Print Logic for SenLab
+        window.printSenlab = function() {
+            document.body.classList.add('printing-senlab');
+            window.print();
+            setTimeout(() => { 
+                document.body.classList.remove('printing-senlab'); 
+            }, 500);
         };
 
-        targetRoom.appendChild(giscusScript);
-    }
-};
+        // 3. Print Logic for SenCal Diagnostics
+        window.printSencal = function() {
+            document.body.classList.add('printing-sencal');
+            window.print();
+            setTimeout(() => { 
+                document.body.classList.remove('printing-sencal'); 
+            }, 500);
+        };
+
+        // ==========================================
+        // GISCUS COMMENT SYSTEM (TELEPORTATION ENGINE)
+        // ==========================================
+        window.loadComments = function(title, containerId, btnElement) {
+            const targetRoom = document.getElementById(containerId);
+
+            // If the comment box is already inside this specific room, do nothing
+            if (targetRoom.querySelector('.giscus')) return;
+
+            // 1. RESET: Bring back all the "Comments" buttons on the page
+            document.querySelectorAll('.comment-btn').forEach(btn => {
+                if(!btn.classList.contains('print-btn')) {
+                    btn.style.display = 'inline-flex';
+                }
+            });
+
+            // 2. HIDE: Make the button they just clicked disappear
+            btnElement.style.display = 'none';
+
+            // 3. SEARCH: Look to see if Giscus is already alive anywhere on the page
+            const existingGiscus = document.querySelector('.giscus');
+
+            if (existingGiscus) {
+                // MAGIC TRICK: Teleport the existing comment box to the new recipe!
+                targetRoom.appendChild(existingGiscus);
+
+                // Tell the Giscus system to switch to the new recipe's comments
+                const iframe = existingGiscus.querySelector('iframe.giscus-frame');
+                if (iframe) {
+                    iframe.contentWindow.postMessage(
+                        { giscus: { setConfig: { term: title } } },
+                        'https://giscus.app'
+                    );
+                }
+            } else {
+                // FIRST TIME ONLY: Build the comment engine from scratch
+                targetRoom.innerHTML = '<div id="giscus-loading" style="text-align: center; color: #d48a44; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Warming up the comment oven...</div>';
+
+                const giscusScript = document.createElement('script');
+                giscusScript.src = "https://giscus.app/client.js";
+                giscusScript.setAttribute("data-repo", "ecv190250/bakes-by-sen");
+                giscusScript.setAttribute("data-repo-id", "R_kgDOS5FT9g");
+                giscusScript.setAttribute("data-category", "General");
+                giscusScript.setAttribute("data-category-id", "DIC_kwDOS5FT9s4C_Jf-");
+                giscusScript.setAttribute("data-mapping", "specific");
+                giscusScript.setAttribute("data-term", title);
+                giscusScript.setAttribute("data-strict", "0");
+                giscusScript.setAttribute("data-reactions-enabled", "1");
+                giscusScript.setAttribute("data-emit-metadata", "0");
+                giscusScript.setAttribute("data-input-position", "bottom");
+                giscusScript.setAttribute("data-theme", "light");
+                giscusScript.setAttribute("data-lang", "en");
+                giscusScript.setAttribute("crossorigin", "anonymous");
+                giscusScript.async = true;
+
+                // Clean up the loading text once it arrives
+                giscusScript.onload = function() {
+                    const loader = document.getElementById('giscus-loading');
+                    if(loader) loader.remove();
+                };
+
+                targetRoom.appendChild(giscusScript);
+            }
+        };
 
         // Search & Recipe Logic
         let globalRecipes = [];
