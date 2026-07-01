@@ -1108,10 +1108,32 @@
         document.addEventListener('click', function(e) { if (!e.target.closest('.search-wrapper')) { suggestionsBox.style.display = 'none'; } });
 
         // ==========================================
-        // AI CHAT BOT LOGIC
-        // ==========================================
-       
-        async function sendChatMessage(retryText = null) {
+// AI CHAT BOT LOGIC
+// ==========================================
+function toggleChatWindow() {
+    const chatWindow = document.getElementById('chatWindow');
+    const chatBadge = document.getElementById('chatBadge');
+    
+    chatWindow.classList.toggle('active');
+    
+    if (chatWindow.classList.contains('active')) {
+        // Chat opened: Hide badge, focus input, lock background scroll
+        chatBadge.style.display = 'none';
+        document.getElementById('chatInput').focus();
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        // Chat closed: Unlock background scroll
+        document.body.style.overflow = ''; 
+    }
+}
+
+function handleChatKeypress(event) {
+    if (event.key === 'Enter') {
+        sendChatMessage();
+    }
+}
+
+async function sendChatMessage(retryText = null) {
     const input = document.getElementById('chatInput');
     const body = document.getElementById('chatBody');
     
@@ -1128,7 +1150,7 @@
     if (retryText === null) {
         const userDiv = document.createElement('div');
         userDiv.className = 'msg-bubble msg-user';
-        userDiv.textContent = messageText; // Using textContent strictly prevents XSS injection
+        userDiv.textContent = messageText; 
         body.appendChild(userDiv);
         input.value = '';
     }
@@ -1139,7 +1161,7 @@
     let responseHTML = "";
     let isError = false;
 
-    // 3. Fast-Path / Static Logic (Saves API calls and speeds up simple queries)
+    // 3. Fast-Path / Static Logic 
     const greetings = ['hi', 'hello', 'hey'];
     if (greetings.includes(lowerInput)) {
         responseHTML = marked.parse("Hello there, Chef Erick! What are we baking from scratch today?");
@@ -1164,7 +1186,7 @@
         body.appendChild(loadingDiv);
         scrollToBottom();
 
-        // THE FIX: Increased timeout to 60 seconds (60000ms)
+        // 60 Second Timeout Controller
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -1185,16 +1207,14 @@
                 })
             });
 
-            // THE FIX: Removed the "throw new Error" brick wall here!
-            // Now it will always read what Cloudflare says, even if there's a backend error.
             const data = await aiResponse.json();
             
-            // Look for our custom Cloudflare bakery/diagnostic errors
-            if (data.answer && data.answer.includes("DIAGNOSTIC CODE") || data.answer.includes("WORKER ERROR")) {
+            // Check if Cloudflare sent us a Bakery Error with a diagnostic code
+            if (data.answer && (data.answer.includes("DIAGNOSTIC CODE") || data.answer.includes("WORKER ERROR"))) {
                 isError = true; 
             }
             
-            // Parse the markdown
+            // Parse the markdown safely
             responseHTML = marked.parse(data.answer || "I'm not quite sure how to answer that.");
 
         } catch (error) {
@@ -1239,8 +1259,7 @@
     body.appendChild(botDiv);
     scrollToBottom();
 }
-
-        
+       
         // Initialize fetch on page load
         fetchMyFoodPosts();
 
