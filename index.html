@@ -1110,30 +1110,7 @@
         // ==========================================
         // AI CHAT BOT LOGIC
         // ==========================================
-        function toggleChatWindow() {
-            const chatWindow = document.getElementById('chatWindow');
-            const chatBadge = document.getElementById('chatBadge');
-            
-            chatWindow.classList.toggle('active');
-            
-            if (chatWindow.classList.contains('active')) {
-                // Chat opened: Hide badge, focus input, lock background scroll
-                chatBadge.style.display = 'none';
-                document.getElementById('chatInput').focus();
-                document.body.style.overflow = 'hidden'; 
-            } else {
-                // Chat closed: Unlock background scroll
-                document.body.style.overflow = ''; 
-            }
-        }
-
-        function handleChatKeypress(event) {
-            if (event.key === 'Enter') {
-                sendChatMessage();
-            }
-        }
-
-     async function sendChatMessage(retryText = null) {
+        async function sendChatMessage(retryText = null) {
     const input = document.getElementById('chatInput');
     const body = document.getElementById('chatBody');
     
@@ -1186,12 +1163,11 @@
         body.appendChild(loadingDiv);
         scrollToBottom();
 
-        // Set a 15-second timeout controller so the fetch doesn't hang indefinitely 
+        // THE FIX: Increased timeout to 60 seconds (60000ms)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
 
         try {
-            // Safely gather context variables (falls back to empty string if element is missing on a specific page)
             const targetEl = document.getElementById('sc-target');
             const flourEl = document.getElementById('sc-flour');
 
@@ -1208,27 +1184,27 @@
                 })
             });
 
-            if (!aiResponse.ok) throw new Error(`HTTP error! status: ${aiResponse.status}`);
-
+            // THE FIX: Removed the "throw new Error" brick wall here!
+            // Now it will always read what Cloudflare says, even if there's a backend error.
             const data = await aiResponse.json();
             
-            if (data.answer && data.answer.includes("Quota exceeded")) {
-                isError = true;
-                responseHTML = "<p>The ovens are at full capacity right now! Let me clear a shelf—please try your question again in just a moment.</p>";
-            } else {
-                // Safely parse the markdown
-                responseHTML = marked.parse(data.answer || "I'm not quite sure how to answer that.");
+            // Look for our custom Cloudflare bakery/diagnostic errors
+            if (data.answer && data.answer.includes("DIAGNOSTIC CODE") || data.answer.includes("WORKER ERROR")) {
+                isError = true; 
             }
+            
+            // Parse the markdown
+            responseHTML = marked.parse(data.answer || "I'm not quite sure how to answer that.");
+
         } catch (error) {
             isError = true;
             if (error.name === 'AbortError') {
                 responseHTML = "<p>The connection timed out. The dough might be resting too long! Try again.</p>";
             } else {
-                responseHTML = "<p>I'm having trouble connecting to the ovens right now. Please check your network or try again later.</p>";
+                responseHTML = `<p>I'm having trouble connecting to the ovens right now. (Frontend Error: ${error.message})</p>`;
             }
             console.error("AI Chat Error:", error);
         } finally {
-            // ALWAYS clear the timeout and remove the loading spinner
             clearTimeout(timeoutId);
             const loader = document.getElementById(loadingId);
             if (loader) loader.remove();
@@ -1239,24 +1215,19 @@
     const botDiv = document.createElement('div');
     botDiv.className = 'msg-bubble msg-bot';
     
-    // Avatar
     const avatarImg = document.createElement('img');
     avatarImg.src = "images/erick-pic-.jpg";
     avatarImg.alt = "Erick";
     avatarImg.className = "msg-bot-avatar";
     botDiv.appendChild(avatarImg);
 
-    // Message Container
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML = responseHTML; 
     
-    // Append dynamic Retry button directly via DOM if needed (Highly secure, avoids escaping issues)
     if (isError) {
         const retryBtn = document.createElement('button');
         retryBtn.className = 'chat-retry-btn';
         retryBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Retry Question';
-        
-        // Binds the exact text to the click without needing ugly string replacements
         retryBtn.onclick = () => sendChatMessage(messageText); 
         
         contentDiv.appendChild(document.createElement('br'));
