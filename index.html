@@ -76,6 +76,13 @@
         .section-kicker { color: var(--primary); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
         .section-heading h2 { margin-top: 0.35rem; font-size: 2rem; }
         .section-heading p { margin-top: 0.35rem; color: var(--muted); font-size: 0.9rem; }
+        .category-filter-bar { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; margin: 0 0 1.5rem; }
+        .category-filter-label { color: var(--muted); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 0.25rem; }
+        .category-filter { border: 1px solid rgba(140, 106, 81, 0.28); border-radius: 999px; padding: 0.45rem 0.8rem; background: transparent; color: var(--dark); cursor: pointer; font: 500 0.78rem 'Poppins', sans-serif; transition: 0.2s ease; }
+        .category-filter:hover, .category-filter:focus-visible { border-color: var(--primary); color: var(--primary); outline: none; }
+        .category-filter.active { background: var(--dark); border-color: var(--dark); color: white; }
+        .category-filter-count { display: inline-grid; place-items: center; min-width: 1.25rem; height: 1.25rem; margin-left: 0.25rem; padding: 0 0.25rem; border-radius: 999px; background: rgba(212, 138, 68, 0.14); color: var(--primary); font-size: 0.68rem; }
+        .category-filter.active .category-filter-count { background: rgba(255,255,255,0.18); color: white; }
         .loading-state { text-align: center; color: var(--primary); font-size: 1.2rem; margin: 4rem 0; animation: pulse 1.5s infinite; font-style: italic; }
         
         .bake-card { background: var(--paper); border-radius: 16px; padding: 0.85rem; margin-bottom: 0.9rem; box-shadow: 0 10px 24px rgba(44, 30, 22, 0.06); border: 1px solid rgba(140, 106, 81, 0.12); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 0.8s forwards; transition: transform 0.25s ease, box-shadow 0.25s ease; }
@@ -86,6 +93,7 @@
         .recipe-details[open] summary::after { content: '−'; }
         .recipe-summary-title { flex: 1; }
         .recipe-summary-action { color: var(--primary); font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+        .recipe-category { display: inline-block; margin: 0 0.65rem 0.65rem; padding: 0.25rem 0.55rem; border-radius: 999px; background: rgba(212, 138, 68, 0.12); color: var(--muted); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
         .recipe-details summary:hover { background: rgba(212, 138, 68, 0.08); }
         .recipe-thumb { width: 58px; height: 58px; flex: 0 0 58px; object-fit: cover; border-radius: 10px; margin: 0; box-shadow: 0 5px 12px rgba(44, 30, 22, 0.12); }
         .recipe-thumb-placeholder { display: flex; align-items: center; justify-content: center; background: #f3e5d8; color: var(--primary); font-size: 1.2rem; }
@@ -122,6 +130,9 @@
             .recipe-summary-action { font-size: 0.7rem; }
             .recipe-thumb { width: 48px; height: 48px; flex-basis: 48px; }
             .section-heading h2 { font-size: 1.7rem; }
+            .category-filter-bar { gap: 0.45rem; margin-bottom: 1.25rem; }
+            .category-filter-label { width: 100%; margin-bottom: 0.1rem; }
+            .category-filter { padding: 0.4rem 0.65rem; }
             .back-to-top { right: 90px; bottom: 24px; }
             .action-buttons { flex-direction: column; width: 100%; }
             .comment-btn { width: 100%; }
@@ -452,6 +463,7 @@
             <h2>Recipe Journal</h2>
             <p>Thoughtful bakes, tested techniques, and small rituals worth repeating.</p>
         </div>
+        <div class="category-filter-bar no-print" id="categoryFilters" aria-label="Filter recipes by category"></div>
         <div id="posts-container"></div>
     </main>
 
@@ -1061,9 +1073,11 @@
 
         // Search & Recipe Logic
         let globalRecipes = [];
+        let activeCategory = 'all';
         const searchBar = document.getElementById('searchBar');
         const suggestionsBox = document.getElementById('suggestionsBox');
         const loadingIndicator = document.getElementById('loading');
+        const categoryFilters = document.getElementById('categoryFilters');
         const backToTop = document.getElementById('backToTop');
 
         window.addEventListener('scroll', () => {
@@ -1078,7 +1092,7 @@
             const container = document.getElementById('posts-container');
             let allPosts = []; 
             try {
-                const cachedPosts = sessionStorage.getItem('sen_bakes_cache');
+                const cachedPosts = sessionStorage.getItem('sen_bakes_cache_v4');
                 if (cachedPosts) {
                     allPosts = JSON.parse(cachedPosts);
                     allPosts.forEach(p => p.date = new Date(p.date));
@@ -1096,14 +1110,18 @@
                             const title = titleMatch ? titleMatch[1].trim() : 'Fresh out of the oven';
                             const imgMatch = meta.match(/image:\s*['"]?([^'"\r\n]+)['"]?/);
                             const img = imgMatch ? imgMatch[1].trim() : '';
+                            const categoryMatch = meta.match(/category:\s*['"]?([^'"\r\n]+)['"]?/);
+                            const category = categoryMatch ? categoryMatch[1].trim() : inferCategory(title, body);
                             const dateMatch = meta.match(/date:\s*['"]?(.*?)['"]?\n/);
                             const postDate = dateMatch ? new Date(dateMatch[1]) : new Date(0);
-                            allPosts.push({ title, img, body, date: postDate });
+                            allPosts.push({ title, img, body, category, date: postDate });
                         }
                     }
                     allPosts.sort((a, b) => b.date - a.date);
-                    sessionStorage.setItem('sen_bakes_cache', JSON.stringify(allPosts));
+                    sessionStorage.setItem('sen_bakes_cache_v4', JSON.stringify(allPosts));
                 }
+                allPosts.forEach(post => { post.category = post.category || inferCategory(post.title, post.body); });
+                renderCategoryFilters(allPosts);
                 
                 loadingIndicator.style.display = 'none';
                 
@@ -1123,6 +1141,7 @@
                                 <span class="recipe-summary-action">View recipe</span>
                             </summary>
                             <div class="recipe-content">
+                                <span class="recipe-category">${post.category}</span>
                                 ${post.img ? `<img src="${post.img}" alt="${post.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
                                 <h3>${post.title}</h3>
                                 <div>${marked.parse(post.body)}</div>
@@ -1136,12 +1155,52 @@
                         </details>
                     `;
                     container.appendChild(div);
-                    globalRecipes.push({ title: post.title, img: post.img, body: post.body, element: div, details: div.querySelector('.recipe-details') });
+                    globalRecipes.push({ title: post.title, img: post.img, body: post.body, category: post.category.toLowerCase(), element: div, details: div.querySelector('.recipe-details') });
                 }
+                filterDisplayedRecipes(searchBar.value.toLowerCase().trim());
             } catch (e) { 
                 console.error("Error loading recipes:", e); 
                 loadingIndicator.innerHTML = "Oops! We spilled the flour. Please refresh the page.";
             }
+        }
+
+        function inferCategory(title, body) {
+            const titleText = title.toLowerCase();
+            const bodyText = body.toLowerCase();
+            if (/welcome|first bite/.test(titleText)) return 'Journal';
+            if (/cookie|brownie/.test(titleText)) return 'Cookies';
+            if (/cake|sponge/.test(titleText)) return 'Cakes';
+            if (/breakfast|donut|coffee|morning/.test(titleText)) return 'Breakfast';
+            if (/tart|pastry|croissant|custard/.test(titleText)) return 'Pastry';
+            if (/cookie|brownie/.test(bodyText)) return 'Cookies';
+            if (/cake|sponge/.test(bodyText)) return 'Cakes';
+            if (/breakfast|donut|coffee|morning/.test(bodyText)) return 'Breakfast';
+            if (/tart|pastry|croissant|custard/.test(bodyText)) return 'Pastry';
+            return 'Journal';
+        }
+
+        function renderCategoryFilters(posts) {
+            const counts = posts.reduce((result, post) => {
+                const category = post.category || 'Journal';
+                result[category] = (result[category] || 0) + 1;
+                return result;
+            }, {});
+            const order = ['Breakfast', 'Cakes', 'Cookies', 'Pastry', 'Journal'];
+            const availableCategories = order.filter(category => counts[category]);
+            const buttons = [{ label: 'All recipes', value: 'all', count: posts.length }, ...availableCategories.map(category => ({ label: category, value: category.toLowerCase(), count: counts[category] }))];
+            categoryFilters.innerHTML = `<span class="category-filter-label">Browse by</span>${buttons.map(button => `<button type="button" class="category-filter${button.value === activeCategory ? ' active' : ''}" data-category="${button.value}" aria-pressed="${button.value === activeCategory}">${button.label}<span class="category-filter-count">${button.count}</span></button>`).join('')}`;
+            categoryFilters.querySelectorAll('.category-filter').forEach(button => {
+                button.addEventListener('click', () => {
+                    activeCategory = button.dataset.category;
+                    categoryFilters.querySelectorAll('.category-filter').forEach(item => {
+                        const isActive = item === button;
+                        item.classList.toggle('active', isActive);
+                        item.setAttribute('aria-pressed', isActive);
+                    });
+                    suggestionsBox.style.display = 'none';
+                    filterDisplayedRecipes(searchBar.value.toLowerCase().trim());
+                });
+            });
         }
 
         function debounce(func, timeout = 300){
@@ -1153,10 +1212,13 @@
             suggestionsBox.innerHTML = '';
             if (query === '') {
                 suggestionsBox.style.display = 'none';
-                globalRecipes.forEach(r => r.element.style.display = 'block');
+                filterDisplayedRecipes('');
                 return;
             }
-            const matches = globalRecipes.filter(r => r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query));
+            const matches = globalRecipes.filter(r => {
+                const matchesCategory = activeCategory === 'all' || r.category === activeCategory;
+                return matchesCategory && (r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query));
+            });
             if (matches.length > 0) {
                 suggestionsBox.style.display = 'block';
                 matches.forEach(match => {
@@ -1176,7 +1238,9 @@
 
         function filterDisplayedRecipes(query) {
             globalRecipes.forEach(r => {
-                const isMatch = r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query);
+                const matchesCategory = activeCategory === 'all' || r.category === activeCategory;
+                const matchesQuery = !query || r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query);
+                const isMatch = matchesCategory && matchesQuery;
                 r.element.style.display = isMatch ? 'block' : 'none';
                 if (isMatch && query) r.details.open = true;
             });
