@@ -69,10 +69,18 @@
         .overlay.active { opacity: 1; visibility: visible; }
 
         main { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
-        .intro-quote { text-align: center; font-size: 1.2rem; font-style: italic; margin-bottom: 4rem; color: var(--dark); opacity: 0; animation: elegantFadeUp 1s ease-out 0.6s forwards; }
+        .intro-quote { text-align: center; font-size: 1.2rem; font-style: italic; margin-bottom: 1rem; color: var(--dark); opacity: 0; animation: elegantFadeUp 1s ease-out 0.6s forwards; }
+        .recipe-guide { text-align: center; color: #8c6a51; margin: 0 0 3rem; font-size: 0.95rem; }
         .loading-state { text-align: center; color: var(--primary); font-size: 1.2rem; margin: 4rem 0; animation: pulse 1.5s infinite; font-style: italic; }
         
-        .bake-card { background: white; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 0.8s forwards; }
+        .bake-card { background: white; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); line-height: 1.7; opacity: 0; animation: elegantFadeUp 1s ease-out 0.8s forwards; }
+        .recipe-details summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--dark); font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 600; }
+        .recipe-details summary::-webkit-details-marker { display: none; }
+        .recipe-details summary::after { content: '+'; flex: 0 0 auto; color: var(--primary); font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 400; line-height: 1; }
+        .recipe-details[open] summary::after { content: '−'; }
+        .recipe-summary-title { flex: 1; }
+        .recipe-summary-action { color: var(--primary); font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+        .recipe-content { padding-top: 1.5rem; }
         .bake-card img { width: 100%; max-height: 450px; object-fit: cover; border-radius: 8px; margin-bottom: 1.5rem; }
         .bake-card h3 { font-size: 2rem; margin-bottom: 1rem; color: var(--dark); }
         .bake-card ul, .bake-card ol { margin-bottom: 1.5rem; margin-left: 1.5rem; }
@@ -97,8 +105,10 @@
             .search-icon { left: 18px; font-size: 1rem; }
             .sencal-btn { margin: 1rem auto 0 auto; width: 90%; max-width: 400px; justify-content: center; }
             main { padding: 2rem 1rem; }
-            .bake-card { padding: 1.5rem; }
+            .bake-card { padding: 1.25rem; }
             .bake-card h3 { font-size: 1.6rem; }
+            .recipe-details summary { font-size: 1.15rem; }
+            .recipe-summary-action { font-size: 0.7rem; }
             .action-buttons { flex-direction: column; width: 100%; }
             .comment-btn { width: 100%; }
         }
@@ -315,6 +325,7 @@
 
     <main>
         <p class="intro-quote">"Flour, butter, and a little bit of patience. That's how every recipe here begins—no shortcuts, just a genuine passion for baking."</p>
+        <p class="recipe-guide">Choose a recipe below to view the full instructions.</p>
 
         <div class="sencal-container" id="sencal-app">
             <div class="sencal-header">
@@ -931,6 +942,8 @@
         // 1. Print Logic for Recipe Cards
         window.printRecipe = function(btnElement) {
             const card = btnElement.closest('.bake-card');
+            const details = card.querySelector('.recipe-details');
+            if (details) details.open = true;
             document.body.classList.add('printing-card');
             card.classList.add('print-active');
             window.print();
@@ -1071,18 +1084,26 @@
                     const div = document.createElement('div');
                     div.className = 'bake-card';
                     div.innerHTML = `
-                        ${post.img ? `<img src="${post.img}" alt="${post.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
-                        <h3>${post.title}</h3>
-                        <div>${marked.parse(post.body)}</div>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;" class="no-print">
-                        <div class="action-buttons no-print">
-                            <button class="comment-btn" onclick="loadComments('${escapedTitle}', 'giscus-${safeTitle}', this)"><i class="fa-solid fa-comments"></i> Comments</button>
-                            ${printButtonHTML}
-                        </div>
-                        <div id="giscus-${safeTitle}" class="no-print" style="margin-top: 2rem;"></div>
+                        <details class="recipe-details">
+                            <summary>
+                                <span class="recipe-summary-title">${post.title}</span>
+                                <span class="recipe-summary-action">View recipe</span>
+                            </summary>
+                            <div class="recipe-content">
+                                ${post.img ? `<img src="${post.img}" alt="${post.title}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                                <h3>${post.title}</h3>
+                                <div>${marked.parse(post.body)}</div>
+                                <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0 1.5rem 0;" class="no-print">
+                                <div class="action-buttons no-print">
+                                    <button class="comment-btn" onclick="loadComments('${escapedTitle}', 'giscus-${safeTitle}', this)"><i class="fa-solid fa-comments"></i> Comments</button>
+                                    ${printButtonHTML}
+                                </div>
+                                <div id="giscus-${safeTitle}" class="no-print" style="margin-top: 2rem;"></div>
+                            </div>
+                        </details>
                     `;
                     container.appendChild(div);
-                    globalRecipes.push({ title: post.title, img: post.img, body: post.body, element: div });
+                    globalRecipes.push({ title: post.title, img: post.img, body: post.body, element: div, details: div.querySelector('.recipe-details') });
                 }
             } catch (e) { 
                 console.error("Error loading recipes:", e); 
@@ -1124,6 +1145,7 @@
             globalRecipes.forEach(r => {
                 const isMatch = r.title.toLowerCase().includes(query) || r.body.toLowerCase().includes(query);
                 r.element.style.display = isMatch ? 'block' : 'none';
+                if (isMatch && query) r.details.open = true;
             });
         }
 
