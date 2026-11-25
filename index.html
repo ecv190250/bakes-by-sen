@@ -45,9 +45,9 @@
 
         header { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(rgba(52, 32, 25, 0.8), rgba(52, 32, 25, 0.8)), url('https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000') center/cover; color: var(--light); padding: 7.5rem 1rem 5.5rem 1rem; text-align: center; width: 100%; z-index: 50; box-shadow: 0 18px 40px rgba(52, 32, 25, 0.16); }
         header::before { content: ''; position: absolute; z-index: -1; left: 50%; bottom: -8rem; width: min(70vw, 38rem); height: 18rem; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, rgba(242, 204, 120, 0.42), transparent 68%); filter: blur(12px); animation: ovenGlow 5s ease-in-out infinite; pointer-events: none; }
-        header > *:not(.baking-atmosphere) { position: relative; z-index: 2; }
-        header h1 { margin: 0; font-size: clamp(2.8rem, 6vw, 4rem); letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
-        header p { font-size: 1.3rem; font-style: italic; color: var(--custard); margin-top: 15px; opacity: 0; animation: elegantFadeUp 1s ease-out 0.3s forwards; }
+        header > *:not(.baking-atmosphere) { z-index: 2; }
+        header h1 { position: relative; margin: 0; font-size: clamp(2.8rem, 6vw, 4rem); letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
+        header p { position: relative; font-size: 1.3rem; font-style: italic; color: var(--custard); margin-top: 15px; opacity: 0; animation: elegantFadeUp 1s ease-out 0.3s forwards; }
         .baking-atmosphere { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .flour-dot { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 248, 239, 0.7); animation: flourFloat 6s ease-in-out infinite; }
         .flour-dot:nth-child(1) { left: 18%; top: 30%; animation-delay: -1s; }
