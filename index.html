@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bakes by Sen</title>
+    <title>Bakes by Sen | Handcrafted Baking Recipes &amp; Tools</title>
+    <meta name="description" content="Handcrafted baking recipes, kitchen experiments, and practical baking tools from Erick at Bakes by Sen.">
+    <meta name="author" content="Erick Villabroza">
+    <link rel="canonical" href="https://bakes-by-sen.pages.dev/">
+    <link rel="icon" href="/images/erick-pic-.jpg" type="image/jpeg">
     
     <meta property="og:title" content="Bakes by Sen">
     <meta property="og:description" content="Handcrafted from scratch, shared with love. A personal baking journal by Erick.">
@@ -24,9 +28,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--light); color: var(--dark); overflow-x: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
         
         @keyframes elegantFadeUp { 0% { opacity: 0; transform: translateY(25px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+        }
 
         header { position: relative; background: linear-gradient(rgba(44, 30, 22, 0.75), rgba(44, 30, 22, 0.75)), url('https://images.unsplash.com/photo-1555507036-ab1f40ce88cb?auto=format&fit=crop&q=80&w=2000') center/cover; color: var(--light); padding: 8rem 1rem 6rem 1rem; text-align: center; width: 100%; z-index: 50; }
         header h1 { margin: 0; font-size: 4rem; letter-spacing: 2px; animation: elegantFadeUp 1s ease-out forwards; }
@@ -257,7 +266,7 @@
 <body>
 
     <header>
-        <div class="hamburger-menu" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+        <button class="hamburger-menu" id="menuBtn" type="button" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
         
         <h1>Bakes by Sen</h1>
         <p>Handcrafted from scratch, shared with love.</p>
@@ -265,34 +274,36 @@
         <div class="top-bar no-print">
             <div class="search-wrapper">
                 <i class="fa-solid fa-search search-icon"></i>
-                <input type="text" id="searchBar" placeholder="Search menu..." autocomplete="off">
+                <label class="sr-only" for="searchBar">Search recipes and tools</label>
+                <input type="search" id="searchBar" placeholder="Search recipes and tools..." autocomplete="off">
                 <div id="suggestionsBox" class="suggestions-box"></div>
             </div>
          
-            <button class="sencal-btn glossary-btn" onclick="openGlossary()" title="Baking Terminologies">
+            <button type="button" class="sencal-btn glossary-btn" onclick="openGlossary()" title="Baking Terminologies" aria-haspopup="dialog">
                 <i class="fa-solid fa-book"></i> Glossary
             </button>
             
-            <button class="sencal-btn" onclick="toggleSencal()" title="Open Smart Dough Diagnoser">
+            <button type="button" class="sencal-btn" onclick="toggleSencal()" title="Open Smart Dough Diagnoser" aria-controls="sencal-app" aria-expanded="false">
                 <i class="fa-solid fa-scale-balanced"></i> Diagnoser
+            </button>
 
-                <button class="sencal-btn" onclick="toggleSenlab()" title="Open Ingredient Laboratory">
+            <button type="button" class="sencal-btn" onclick="toggleSenlab()" title="Open Ingredient Laboratory" aria-controls="senlab-app" aria-expanded="false">
                 <i class="fa-solid fa-flask"></i> SenLab
             </button>
 
             <div class="social-row">
-                <a href="https://www.facebook.com/ECV190250" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.tiktok.com/@senpairikz?lang=en" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
-                <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.facebook.com/ECV190250" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                <a href="https://www.instagram.com/senpairikz?utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://www.tiktok.com/@senpairikz?lang=en" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/in/erick-villabroza-55b14a108/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
             </div>
         </div>
     </header>
 
     <div class="sidebar" id="sidebar">
-        <div class="close-btn" id="closeBtn" style="cursor:pointer; font-size:1.5rem; text-align:right; margin-bottom: 1rem;">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
+        <button class="close-btn" id="closeBtn" type="button" aria-label="Close navigation menu" style="cursor:pointer; font-size:1.5rem; text-align:right; margin-bottom: 1rem; background:none; border:0; width:100%;">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
         <h2>About the Baker</h2>
         <p style="margin-top: 1rem;">Hi, I'm Erick. For me, baking is more than just a recipe—it's about precision, consistency, and sharing a piece of my heart. Over the last decade, my journey through professional kitchens has taken me from hands-on production to leading baking teams.</p>
         <p style="margin-top: 1rem;">Every recipe in this journal blends technical care with true passion, crafted from scratch to bring people together.</p>
@@ -418,13 +429,14 @@
         <p style="font-size: 0.85rem; opacity: 0.75; margin: 0;">&copy; 2026 Senpairikz. All rights reserved.</p>
     </footer>
 
-    <div class="modal-overlay no-print" id="glossaryModal" onclick="closeGlossary(event)">
+    <div class="modal-overlay no-print" id="glossaryModal" role="dialog" aria-modal="true" aria-labelledby="glossaryTitle" onclick="closeGlossary(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h2>Kitchen Glossary</h2>
-                <button class="chat-close-btn" onclick="closeGlossary(event)">✕</button>
+                <h2 id="glossaryTitle">Kitchen Glossary</h2>
+                <button type="button" class="chat-close-btn" aria-label="Close kitchen glossary" onclick="closeGlossary(event)">✕</button>
             </div>
-            <input type="text" id="glossarySearch" placeholder="Search terms (e.g. Autolyse)..." oninput="filterGlossary()">
+            <label class="sr-only" for="glossarySearch">Search glossary terms</label>
+            <input type="search" id="glossarySearch" placeholder="Search terms (e.g. Autolyse)..." oninput="filterGlossary()">
             <div class="glossary-list" id="glossaryList">
                 <div style="text-align:center; padding: 20px; color: #888;">
                     <i class="fa-solid fa-spinner fa-spin"></i> Opening the books...
@@ -434,10 +446,10 @@
     </div>
     
     <div class="chat-widget-container no-print">
-        <div class="chat-trigger" id="chatTrigger" onclick="toggleChatWindow()">
+        <button type="button" class="chat-trigger" id="chatTrigger" onclick="toggleChatWindow()" aria-label="Open baking sous-chef chat" aria-controls="chatWindow" aria-expanded="false">
             <img src="images/erick-pic-.jpg" alt="Erick">
             <div class="notification-badge" id="chatBadge"></div>
-        </div>
+        </button>
 
         <div class="chat-window" id="chatWindow">
             <div class="chat-header">
@@ -448,7 +460,7 @@
                         <span>Sous-Chef AI</span>
                     </div>
                 </div>
-                <button class="chat-close-btn" onclick="toggleChatWindow()">✕</button>
+                <button type="button" class="chat-close-btn" aria-label="Close baking sous-chef chat" onclick="toggleChatWindow()">✕</button>
             </div>
 
             <div class="chat-body" id="chatBody">
@@ -479,7 +491,8 @@
             const modal = document.getElementById('glossaryModal');
             if(modal) {
                 modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; 
+                document.body.style.overflow = 'hidden';
+                document.getElementById('glossarySearch').focus();
             }
             
             if (Object.keys(dictionaryData).length === 0) {
@@ -502,7 +515,8 @@
         function closeGlossary(e) {
             if (e.target.id === 'glossaryModal' || e.target.classList.contains('chat-close-btn')) {
                 document.getElementById('glossaryModal').classList.remove('active');
-                document.body.style.overflow = ''; 
+                document.body.style.overflow = '';
+                document.querySelector('.glossary-btn').focus();
             }
         }
 
@@ -542,18 +556,26 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         
-        menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); });
-        closeBtn.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
-        overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }
+        menuBtn.addEventListener('click', () => { sidebar.classList.add('active'); overlay.classList.add('active'); menuBtn.setAttribute('aria-expanded', 'true'); closeBtn.focus(); });
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
 
         // Sencal Toggle
         function toggleSencal() {
             const app = document.getElementById('sencal-app');
+            const trigger = document.querySelector('[aria-controls="sencal-app"]');
             if (app.style.display === 'none' || app.style.display === '') {
                 app.style.display = 'block';
+                trigger.setAttribute('aria-expanded', 'true');
                 app.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 app.style.display = 'none';
+                trigger.setAttribute('aria-expanded', 'false');
             }
         }
 
@@ -1113,17 +1135,20 @@
 function toggleChatWindow() {
     const chatWindow = document.getElementById('chatWindow');
     const chatBadge = document.getElementById('chatBadge');
+    const chatTrigger = document.getElementById('chatTrigger');
     
     chatWindow.classList.toggle('active');
     
     if (chatWindow.classList.contains('active')) {
         // Chat opened: Hide badge, focus input, lock background scroll
         chatBadge.style.display = 'none';
+        chatTrigger.setAttribute('aria-expanded', 'true');
         document.getElementById('chatInput').focus();
-        document.body.style.overflow = 'hidden'; 
+        document.body.style.overflow = 'hidden';
     } else {
         // Chat closed: Unlock background scroll
-        document.body.style.overflow = ''; 
+        chatTrigger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
     }
 }
 
@@ -1302,12 +1327,15 @@ function populateIngredientDropdown() {
 // 3. Open Engine: The "Click" trigger
 async function toggleSenlab() {
     const labApp = document.getElementById('senlab-app');
+    const trigger = document.querySelector('[aria-controls="senlab-app"]');
     if (labApp.style.display === 'none' || labApp.style.display === '') {
         await loadSenLabData(); // Wait for data to load
         labApp.style.display = 'block';
-        labApp.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+        trigger.setAttribute('aria-expanded', 'true');
+        labApp.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
         labApp.style.display = 'none';
+        trigger.setAttribute('aria-expanded', 'false');
     }
 }
 
