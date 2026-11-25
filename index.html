@@ -312,6 +312,9 @@
         .chat-footer input:focus { border-color: var(--primary, #d48a44); background: white; }
         .chat-send-btn { background: var(--primary, #d48a44); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
         .chat-send-btn:hover { background: var(--dark, #2c1e16); }
+        .chat-suggestions { display: flex; gap: 6px; overflow-x: auto; padding: 0 15px 10px; background: white; scrollbar-width: thin; }
+        .chat-suggestion-btn { flex: 0 0 auto; border: 1px solid rgba(212, 138, 68, 0.35); border-radius: 999px; padding: 6px 10px; background: #fffaf3; color: var(--dark); cursor: pointer; font: 500 0.7rem 'Poppins', sans-serif; white-space: nowrap; transition: 0.2s ease; }
+        .chat-suggestion-btn:hover, .chat-suggestion-btn:focus-visible { border-color: var(--primary); color: var(--primary); outline: none; }
 
         @media (max-width: 450px) {
             .chat-window { position: fixed; bottom: 0; right: 0; width: 100vw; height: 100vh; border-radius: 0; }
@@ -587,8 +590,14 @@
             <div class="chat-body" id="chatBody">
                 <div class="msg-bubble msg-bot">
                     <img src="images/erick-pic-.jpg" alt="Erick" class="msg-bot-avatar">
-                    <div>Hi! I'm Erick, your digital baking sous-chef. Ask me anything about scaling recipes, correcting a sticky dough, or tracking down my favorite techniques! 🌾</div>
+                    <div>Hi! I'm Erick, your digital baking sous-chef. I can read the recipe currently open in the Recipe Book and help you scale it, substitute ingredients, or troubleshoot a step.</div>
                 </div>
+            </div>
+
+            <div class="chat-suggestions" aria-label="Suggested baking questions">
+                <button type="button" class="chat-suggestion-btn" onclick="askSuggestedQuestion('How do I scale this recipe?')">Scale this recipe</button>
+                <button type="button" class="chat-suggestion-btn" onclick="askSuggestedQuestion('What can I substitute in this recipe?')">Substitutions</button>
+                <button type="button" class="chat-suggestion-btn" onclick="askSuggestedQuestion('Explain the most important step in this recipe.')">Explain a step</button>
             </div>
 
             <div class="chat-footer">
@@ -1396,6 +1405,24 @@ function handleChatKeypress(event) {
     }
 }
 
+function getActiveRecipeContext() {
+    const activeRecipe = typeof bookMatches !== 'undefined' && bookMatches.length
+        ? bookMatches[bookIndex]
+        : globalRecipes.find(recipe => recipe.details && recipe.details.open);
+    if (!activeRecipe) return null;
+    return {
+        title: activeRecipe.title,
+        category: activeRecipe.category,
+        instructions: activeRecipe.body.slice(0, 12000)
+    };
+}
+
+function askSuggestedQuestion(question) {
+    const input = document.getElementById('chatInput');
+    input.value = question;
+    sendChatMessage();
+}
+
 async function sendChatMessage(retryText = null) {
     const input = document.getElementById('chatInput');
     const body = document.getElementById('chatBody');
@@ -1465,7 +1492,8 @@ async function sendChatMessage(retryText = null) {
                     question: messageText,
                     context: {
                         target: targetEl ? targetEl.value : '',
-                        flour: flourEl ? flourEl.value : ''
+                        flour: flourEl ? flourEl.value : '',
+                        recipe: getActiveRecipeContext()
                     }
                 })
             });
