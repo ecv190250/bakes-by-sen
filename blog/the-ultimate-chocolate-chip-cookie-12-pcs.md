@@ -2,6 +2,7 @@
 title: The Ultimate Chocolate Chip Cookie (12 PCS)
 date: 2026-06-13T22:19
 image: /images/Chocolate chips cookies.jpg
+category: Cookies
 ---
 
 ![](/images/IMG_3955.JPG)

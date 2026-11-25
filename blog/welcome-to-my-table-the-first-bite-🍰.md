@@ -1,6 +1,7 @@
 ---
 title: "Welcome to My Table: The First Bite! 🍰"
 date: 2026-06-13T03:39:00.000+03:00
+category: Journal
 ---
 
 

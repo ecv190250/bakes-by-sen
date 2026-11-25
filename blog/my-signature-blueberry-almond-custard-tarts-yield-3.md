@@ -2,6 +2,7 @@
 title: 'My Signature Blueberry & Almond Custard Tarts (Yield: 3)'
 date: 2026-06-17T08:45
 image: /images/IMG_3963.jpg
+category: Pastry
 ---
 
 As someone who is purely passionate about food, there is nothing I love more than building a dessert entirely from scratch. You don't need a massive, industrial kitchen to make beautiful pastries—you just need a little patience and a love for the process.

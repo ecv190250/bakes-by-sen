@@ -2,6 +2,7 @@
 title: 'Morning Rituals: How I Start My Day'
 date: 2026-06-17T08:08
 image: /images/IMG_3961.jpg
+category: Breakfast
 ---
 
 Before the rush of the workday kicks in, I take a few minutes to build something good for myself. It’s not about perfection; it’s about starting the day with intention.
